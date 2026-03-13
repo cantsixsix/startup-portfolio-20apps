@@ -1,101 +1,136 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cold Email Generator</title>
+  <title>ColdReach &#8212; AI Cold Email Generator</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-cold-email{background:#f0f4f8;color:#1a1a2e;font-family:'Inter',sans-serif}
+    .ce-mail-app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:56px 1fr;height:100vh;overflow:hidden}
+    @media(max-width:768px){.ce-mail-app{grid-template-columns:1fr;grid-template-rows:56px auto 1fr}}
+    .ce-toolbar{grid-column:1/-1;background:#1a1a2e;display:flex;align-items:center;padding:0 20px;gap:16px;border-bottom:1px solid #2a2a4e}
+    .ce-toolbar-logo{color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;gap:8px}
+    .ce-toolbar-logo span{font-size:20px}
+    .ce-toolbar-search{flex:1;max-width:400px;background:rgba(255,255,255,.1);border:none;border-radius:8px;padding:8px 14px;color:#fff;font-family:inherit;font-size:13px}
+    .ce-toolbar-search::placeholder{color:rgba(255,255,255,.4)}
+    .ce-toolbar-actions{display:flex;gap:8px;margin-left:auto}
+    .ce-toolbar-actions a{color:rgba(255,255,255,.6);text-decoration:none;font-size:12px;padding:6px 12px;border-radius:6px;transition:all .2s}
+    .ce-toolbar-actions a:hover{background:rgba(255,255,255,.1);color:#fff}
+    .ce-sidebar{background:#fff;border-right:1px solid #e2e8f0;padding:16px;overflow-y:auto}
+    @media(max-width:768px){.ce-sidebar{display:none}}
+    .ce-sidebar-btn{width:100%;padding:10px 14px;background:#4f46e5;color:#fff;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:16px;display:flex;align-items:center;gap:6px;transition:background .2s}
+    .ce-sidebar-btn:hover{background:#4338ca}
+    .ce-folder{padding:8px 12px;border-radius:6px;font-size:13px;color:#64748b;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;margin-bottom:2px}
+    .ce-folder:hover{background:#f1f5f9}
+    .ce-folder.active{background:#eef2ff;color:#4f46e5;font-weight:600}
+    .ce-folder-icon{font-size:16px}
+    .ce-folder-count{margin-left:auto;background:#e2e8f0;color:#64748b;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+    .ce-main{overflow-y:auto;padding:0}
+    .ce-compose{max-width:800px;margin:24px auto;padding:0 24px}
+    .ce-compose-window{background:#fff;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+    .ce-compose-header{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;background:#fafbfc}
+    .ce-compose-header h2{font-size:14px;font-weight:700;display:flex;align-items:center;gap:6px}
+    .ce-compose-body{padding:20px}
+    .ce-field{display:flex;align-items:center;border-bottom:1px solid #f1f5f9;padding:8px 0}
+    .ce-field label{width:50px;font-size:12px;color:#94a3b8;font-weight:600}
+    .ce-field .val{font-size:13px;color:#1a1a2e}
+    .ce-compose-body textarea{width:100%;padding:16px 0;border:none;font-family:inherit;font-size:14px;resize:none;min-height:160px;line-height:1.7;color:#334155}
+    .ce-compose-body textarea:focus{outline:none}
+    .ce-compose-body textarea::placeholder{color:#cbd5e1}
+    .ce-compose-footer{padding:14px 20px;border-top:1px solid #f1f5f9;display:flex;align-items:center;gap:12px;background:#fafbfc}
+    .ce-send-btn{background:#4f46e5;color:#fff;padding:10px 24px;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s}
+    .ce-send-btn:hover{background:#4338ca;transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,70,229,.3)}
+    .ce-tool-btn{background:transparent;border:1px solid #e2e8f0;padding:8px 12px;border-radius:6px;font-size:12px;cursor:pointer;color:#64748b;transition:all .2s;font-family:inherit}
+    .ce-tool-btn:hover{border-color:#4f46e5;color:#4f46e5}
+    .ce-deliverability{display:flex;gap:12px;margin:16px 20px 0;flex-wrap:wrap}
+    .ce-deliv-badge{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:4px}
+    .ce-deliv-ok{background:#dcfce7;color:#166534}.ce-deliv-fail{background:#fee2e2;color:#991b1b}
+    .ce-output-window{margin-top:20px;background:#fff;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;display:none;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+    .ce-output-window.show{display:block}
+    .ce-output-header{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;background:#fafbfc}
+    .ce-output-header h3{font-size:14px;font-weight:700}
+    .ce-output-body{padding:20px;font-size:14px;line-height:1.8;color:#334155}
+    .ce-copy-btn{background:#f8fafc;border:1px solid #e2e8f0;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;color:#64748b;transition:all .2s;font-family:inherit;font-weight:600}
+    .ce-copy-btn:hover{border-color:#4f46e5;color:#4f46e5}
+    .ce-inbox-list{margin:24px auto;max-width:800px;padding:0 24px}
+    .ce-inbox-header{font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;padding:0 4px}
+    .ce-email-row{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s}
+    .ce-email-row:hover{border-color:#4f46e5;box-shadow:0 2px 8px rgba(79,70,229,.08)}
+    .ce-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
+    .ce-email-content{flex:1;min-width:0}
+    .ce-email-from{font-weight:600;font-size:13px}
+    .ce-email-subject{font-size:12px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ce-email-time{font-size:11px;color:#94a3b8;white-space:nowrap}
+    .ce-promo{max-width:800px;margin:30px auto;padding:24px;text-align:center}
+    .ce-promo h2{font-size:clamp(1.4rem,3vw,2rem);font-weight:800;margin-bottom:8px;color:#1a1a2e}
+    .ce-promo p{color:#64748b;font-size:14px;margin-bottom:20px}
+    .ce-promo-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+    @media(max-width:600px){.ce-promo-cards{grid-template-columns:1fr}}
+    .ce-promo-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;text-align:left}
+    .ce-promo-card h3{font-size:13px;font-weight:700;margin-bottom:4px}
+    .ce-promo-card p{font-size:12px;color:#94a3b8;line-height:1.5}
+    .ce-promo-card .ico{font-size:24px;margin-bottom:10px;display:block}
+  </style>
 </head>
 <body class="app-page app-cold-email">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">📧</span>
-        <h1>Cold Email Generator</h1>
-      </div>
-      <p class="app-subtitle">Gere emails persuasivos com análise de deliverability</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <form id="appForm">
-          <div class="form-group">
-            <label for="input">Informações do prospect e contexto</label>
-            <textarea id="input" rows="6" required placeholder="Ex: Prospect: João Silva, CTO da TechCorp. Empresa: SaaS de analytics com 50 funcionários. Pain point: dificuldade em visualizar dados em tempo real. Oferecemos: plataforma de dashboards customizáveis."></textarea>
-          </div>
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">✨</span>
-            Gerar Email
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section" id="outputSection" class="hidden">
-        <div class="output-header">
-          <h2>Seu Cold Email</h2>
-          <button onclick="copyOutput()" class="btn-secondary">📋 Copiar</button>
+  <div class="ce-mail-app">
+    <div class="ce-toolbar">
+      <div class="ce-toolbar-logo"><span>&#9993;</span> ColdReach</div>
+      <input type="text" class="ce-toolbar-search" placeholder="Buscar emails...">
+      <div class="ce-toolbar-actions"><a href="/">&#8592; Voltar</a><a href="#compose">Compor</a></div>
+    </div>
+    <div class="ce-sidebar">
+      <button class="ce-sidebar-btn" onclick="document.getElementById('compose').scrollIntoView({behavior:'smooth'})">&#9999;&#65039; Novo Email</button>
+      <div class="ce-folder active"><span class="ce-folder-icon">&#128229;</span> Inbox <span class="ce-folder-count">3</span></div>
+      <div class="ce-folder"><span class="ce-folder-icon">&#11088;</span> Importantes</div>
+      <div class="ce-folder"><span class="ce-folder-icon">&#128228;</span> Enviados <span class="ce-folder-count">12</span></div>
+      <div class="ce-folder"><span class="ce-folder-icon">&#128196;</span> Rascunhos <span class="ce-folder-count">2</span></div>
+      <div class="ce-folder"><span class="ce-folder-icon">&#128465;&#65039;</span> Lixeira</div>
+      <hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0">
+      <div class="ce-folder"><span class="ce-folder-icon">&#128200;</span> Analytics</div>
+      <div class="ce-folder"><span class="ce-folder-icon">&#9881;&#65039;</span> Settings</div>
+    </div>
+    <div class="ce-main">
+      <div class="ce-promo">
+        <h2>Gere cold emails que &#127919; convertem</h2>
+        <p>IA escreve emails personalizados com analise de deliverability integrada</p>
+        <div class="ce-promo-cards">
+          <div class="ce-promo-card"><span class="ico">&#129302;</span><h3>AI Copywriting</h3><p>Emails persuasivos e personalizados por prospect.</p></div>
+          <div class="ce-promo-card"><span class="ico">&#128272;</span><h3>SPF/DKIM/DMARC</h3><p>Analise de deliverability em tempo real.</p></div>
+          <div class="ce-promo-card"><span class="ico">&#128200;</span><h3>Alta Conversao</h3><p>Templates otimizados para respostas.</p></div>
         </div>
-        
-        <div id="deliverability" class="stats-grid mb-20"></div>
-        <div id="output" class="output-content"></div>
       </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Gerando email...</p>
+      <div class="ce-inbox-list">
+        <div class="ce-inbox-header">Inbox recente</div>
+        <div class="ce-email-row"><div class="ce-avatar" style="background:#4f46e5">JS</div><div class="ce-email-content"><div class="ce-email-from">Joao Silva</div><div class="ce-email-subject">Re: Proposta de parceria - TechCorp Analytics</div></div><div class="ce-email-time">10:32</div></div>
+        <div class="ce-email-row"><div class="ce-avatar" style="background:#ec4899">MR</div><div class="ce-email-content"><div class="ce-email-from">Maria Ribeiro</div><div class="ce-email-subject">Follow-up: Demo agendada para quinta</div></div><div class="ce-email-time">09:15</div></div>
+        <div class="ce-email-row"><div class="ce-avatar" style="background:#f59e0b">PL</div><div class="ce-email-content"><div class="ce-email-from">Pedro Lima</div><div class="ce-email-subject">Interesse na solucao de onboarding</div></div><div class="ce-email-time">Ontem</div></div>
+      </div>
+      <div class="ce-compose" id="compose">
+        <div class="ce-compose-window">
+          <div class="ce-compose-header"><h2>&#9999;&#65039; Gerar Cold Email com IA</h2></div>
+          <div class="ce-compose-body">
+            <div class="ce-field"><label>De:</label><span class="val">voce@empresa.com</span></div>
+            <div class="ce-field"><label>Para:</label><span class="val" style="color:#94a3b8">prospect (gerado pela IA)</span></div>
+            <form id="appForm"><textarea id="input" rows="8" required placeholder="Descreva o prospect e contexto: nome, cargo, empresa, pain point, sua oferta...&#10;&#10;Ex: Prospect: Joao Silva, CTO da TechCorp. Empresa: SaaS de analytics com 50 funcionarios. Pain point: dificuldade em visualizar dados. Oferecemos: plataforma de dashboards."></textarea><div class="ce-compose-footer"><button type="submit" class="ce-send-btn">&#9889; Gerar Email com IA</button><button type="button" class="ce-tool-btn">&#128206; Anexar</button><button type="button" class="ce-tool-btn">&#128197; Agendar</button></div></form>
+          </div>
+          <div id="deliverability" class="ce-deliverability"></div>
+        </div>
+        <div class="ce-output-window" id="outputSection">
+          <div class="ce-output-header"><h3>&#128231; Email Gerado</h3><button onclick="copyOutput()" class="ce-copy-btn">&#128203; Copiar</button></div>
+          <div class="ce-output-body" id="output"></div>
+        </div>
+      </div>
     </div>
   </div>
-
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Gerando email...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('appForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const data = await apiCall('cold-email', {
-          input: document.getElementById('input').value
-        });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          document.getElementById('outputSection').classList.remove('hidden');
-          document.getElementById('output').innerHTML = data.output.replace(/\n/g, '<br>');
-          document.getElementById('output').dataset.raw = data.output;
-          
-          if (data.deliverability) {
-            const d = data.deliverability;
-            document.getElementById('deliverability').innerHTML = `
-              <div class="stat-card ${d.hasSpf ? 'stat-card-success' : 'stat-card-error'}">
-                <span class="stat-value">${d.hasSpf ? '✓' : '✗'}</span>
-                <span class="stat-label">SPF</span>
-              </div>
-              <div class="stat-card ${d.hasDmarc ? 'stat-card-success' : 'stat-card-error'}">
-                <span class="stat-value">${d.hasDmarc ? '✓' : '✗'}</span>
-                <span class="stat-label">DMARC</span>
-              </div>
-              <div class="stat-card ${d.hasDkim ? 'stat-card-success' : 'stat-card-error'}">
-                <span class="stat-value">${d.hasDkim ? '✓' : '✗'}</span>
-                <span class="stat-label">DKIM</span>
-              </div>
-            `;
-          }
-        } else {
-          showAlert(data.error || 'Erro ao gerar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    function copyOutput() {
-      const text = document.getElementById('output').dataset.raw;
-      navigator.clipboard.writeText(text).then(() => showAlert('Copiado!'));
-    }
+    document.getElementById('appForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('cold-email',{input:document.getElementById('input').value});hideLoading();if(data.ok){const os=document.getElementById('outputSection');os.classList.add('show');os.style.display='block';document.getElementById('output').innerHTML=data.output.replace(/\n/g,'<br>');document.getElementById('output').dataset.raw=data.output;if(data.deliverability){const d=data.deliverability;document.getElementById('deliverability').innerHTML='<div class="ce-deliv-badge '+(d.hasSpf?'ce-deliv-ok':'ce-deliv-fail')+'">'+(d.hasSpf?'&#10003;':'&#10007;')+' SPF</div><div class="ce-deliv-badge '+(d.hasDmarc?'ce-deliv-ok':'ce-deliv-fail')+'">'+(d.hasDmarc?'&#10003;':'&#10007;')+' DMARC</div><div class="ce-deliv-badge '+(d.hasDkim?'ce-deliv-ok':'ce-deliv-fail')+'">'+(d.hasDkim?'&#10003;':'&#10007;')+' DKIM</div>'}}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro de conexao','error')}});
+    function copyOutput(){navigator.clipboard.writeText(document.getElementById('output').dataset.raw).then(()=>showAlert('Copiado!'))}
   </script>
 </body>
 </html>

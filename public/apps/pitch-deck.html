@@ -1,140 +1,109 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerador de Pitch Deck</title>
+  <title>DeckBuilder &#8212; AI Pitch Decks</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-pitch-deck{background:#0f0f12;color:#e2e0ea;font-family:'Sora',sans-serif;overflow-x:hidden}
+    .dk-nav{background:rgba(15,15,18,.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:100;padding:0 24px}
+    .dk-nav-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px}
+    .dk-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#e2e0ea}
+    .dk-logo-slides{display:flex;gap:3px}.dk-logo-slide{width:16px;height:12px;border-radius:2px;opacity:.6}
+    .dk-logo-slide:nth-child(1){background:#ff6b6b}.dk-logo-slide:nth-child(2){background:#ffd93d;opacity:1}.dk-logo-slide:nth-child(3){background:#6bcb77}
+    .dk-logo span{font-weight:700;font-size:18px}
+    .dk-nav-links a{color:rgba(226,224,234,.5);text-decoration:none;font-size:13px;margin-left:20px;transition:color .2s}
+    .dk-nav-links a:hover{color:#ffd93d}
+    .dk-content{max-width:960px;margin:0 auto;padding:40px 24px}
+    .dk-slide{background:#18181f;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:56px 48px;margin-bottom:24px;position:relative;overflow:hidden}
+    .dk-slide::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#ff6b6b,#ffd93d,#6bcb77,#4ecdc4,#a78bfa)}
+    .dk-slide-num{position:absolute;top:20px;right:24px;font-size:64px;font-weight:800;color:rgba(255,255,255,.03);line-height:1}
+    @media(max-width:600px){.dk-slide{padding:32px 24px}}
+    .dk-stag{display:inline-block;background:rgba(255,217,61,.08);border:1px solid rgba(255,217,61,.2);border-radius:50px;padding:4px 14px;font-size:11px;font-weight:600;color:#ffd93d;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+    .dk-slide h1{font-size:clamp(1.8rem,4.5vw,3rem);font-weight:800;line-height:1.15;margin-bottom:12px;letter-spacing:-1px}
+    .dk-slide h2{font-size:20px;font-weight:700;margin-bottom:12px}
+    .dk-slide p{color:rgba(226,224,234,.6);font-size:15px;line-height:1.7;max-width:600px}
+    .dk-slide-accent{background:linear-gradient(135deg,rgba(255,107,107,.06),rgba(167,139,250,.06));border-color:rgba(167,139,250,.12)}
+    .dk-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+    @media(max-width:600px){.dk-metrics{grid-template-columns:1fr}}
+    .dk-metric{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:20px;text-align:center}
+    .dk-metric-val{font-size:28px;font-weight:800;background:linear-gradient(135deg,#ffd93d,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .dk-metric-label{font-size:12px;color:rgba(226,224,234,.5);margin-top:4px}
+    .dk-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+    @media(max-width:600px){.dk-features{grid-template-columns:1fr}}
+    .dk-feat{display:flex;align-items:flex-start;gap:12px;padding:16px;background:rgba(255,255,255,.02);border-radius:10px}
+    .dk-feat-ico{font-size:24px;flex-shrink:0}
+    .dk-feat h3{font-size:14px;font-weight:600;margin-bottom:2px}
+    .dk-feat p{font-size:12px;color:rgba(226,224,234,.5);line-height:1.5}
+    .dk-form-slide{background:#18181f;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:40px 48px;margin-bottom:24px;position:relative;overflow:hidden}
+    .dk-form-slide::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:#ffd93d}
+    @media(max-width:600px){.dk-form-slide{padding:24px}}
+    .dk-form-slide h2{font-size:22px;font-weight:700;margin-bottom:4px}
+    .dk-form-sub{color:rgba(226,224,234,.5);font-size:13px;margin-bottom:24px}
+    .dk-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    @media(max-width:600px){.dk-form-grid{grid-template-columns:1fr}}
+    .dk-field label{display:block;font-size:12px;font-weight:600;color:rgba(226,224,234,.7);margin-bottom:4px}
+    .dk-field input,.dk-field textarea{width:100%;padding:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#e2e0ea;font-family:inherit;font-size:13px;transition:border-color .2s}
+    .dk-field input:focus,.dk-field textarea:focus{outline:none;border-color:#ffd93d}
+    .dk-field textarea{resize:vertical;min-height:80px}
+    .dk-field.full{grid-column:1/-1}
+    .dk-submit{width:100%;padding:14px;background:linear-gradient(135deg,#ffd93d,#f59e0b);color:#0f0f12;border:none;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+    .dk-submit:hover{opacity:.9;transform:translateY(-1px)}
+    .dk-output{display:none;margin-top:24px}
+    .dk-output.show{display:block}
+    .dk-output-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .dk-output-head h3{font-size:18px;font-weight:700}
+    .dk-out-actions{display:flex;gap:8px}
+    .dk-out-btn{padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(226,224,234,.7)}
+    .dk-out-btn:hover{border-color:#ffd93d;color:#ffd93d}
+    .dk-result{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:24px;font-size:14px;line-height:1.8;color:rgba(226,224,234,.85)}
+    .dk-result h2{font-size:18px;font-weight:700;color:#ffd93d;margin:16px 0 8px;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:8px}
+    .dk-result h3{font-size:15px;font-weight:600;margin:12px 0 6px}
+    .dk-result strong{color:#e2e0ea}
+    .dk-pagination{display:flex;justify-content:center;gap:8px;margin-bottom:24px}
+    .dk-pg-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.1);transition:all .2s}
+    .dk-pg-dot.active{background:#ffd93d;width:28px;border-radius:5px}
+    .dk-foot{text-align:center;padding:32px 0;font-size:12px;color:rgba(226,224,234,.3)}
+    .dk-foot a{color:rgba(255,217,61,.5);text-decoration:none}
+  </style>
 </head>
 <body class="app-page app-pitch-deck">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">📊</span>
-        <h1>Gerador de Pitch Deck</h1>
-      </div>
-      <p class="app-subtitle">Crie apresentações estruturadas para investidores com IA</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <h2>Informações do Negócio</h2>
-        <form id="pitchForm">
-          <div class="form-group">
-            <label for="problem">Qual problema você resolve? *</label>
-            <textarea id="problem" rows="3" required placeholder="Ex: Empresas B2B perdem 40% do tempo em processos manuais de onboarding"></textarea>
-          </div>
-          
-          <div class="form-group">
-            <label for="solution">Qual sua solução? *</label>
-            <textarea id="solution" rows="3" required placeholder="Ex: Plataforma SaaS que automatiza onboarding com IA e integra todos sistemas existentes"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="market">Mercado e oportunidade</label>
-            <textarea id="market" rows="2" placeholder="Ex: Mercado de $50B, crescimento 25% ao ano, foco inicial em fintechs"></textarea>
-          </div>
-
-          <div class="grid-2">
-            <div class="form-group">
-              <label for="traction">Tração atual</label>
-              <input type="text" id="traction" placeholder="Ex: 50 clientes, $100k MRR">
-            </div>
-
-            <div class="form-group">
-              <label for="ask">Raising</label>
-              <input type="text" id="ask" placeholder="Ex: Seed $2M">
-            </div>
-          </div>
-
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">✨</span>
-            Gerar Pitch Deck com IA
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section" id="outputSection" class="hidden">
-        <div class="output-header">
-          <h2>Seu Pitch Deck</h2>
-          <div class="output-actions">
-            <button onclick="copyToClipboard()" class="btn-secondary">📋 Copiar</button>
-            <button onclick="downloadPDF()" class="btn-secondary">⬇️ Download</button>
-          </div>
+  <nav class="dk-nav"><div class="dk-nav-inner"><a href="/" class="dk-logo"><div class="dk-logo-slides"><div class="dk-logo-slide"></div><div class="dk-logo-slide"></div><div class="dk-logo-slide"></div></div><span>DeckBuilder</span></a><div class="dk-nav-links"><a href="/">&#8592; Voltar</a><a href="#features">Features</a><a href="#build">Build</a></div></div></nav>
+  <div class="dk-content">
+    <div class="dk-slide"><span class="dk-slide-num">01</span><span class="dk-stag">Slide 1 / Title</span><h1>Construa pitch decks que fecham negocio</h1><p>IA que transforma suas ideias em apresentacoes estruturadas com problema, solucao, mercado, tracao e ask.</p></div>
+    <div class="dk-pagination"><span class="dk-pg-dot active"></span><span class="dk-pg-dot"></span><span class="dk-pg-dot"></span><span class="dk-pg-dot"></span><span class="dk-pg-dot"></span></div>
+    <div class="dk-slide dk-slide-accent"><span class="dk-slide-num">02</span><span class="dk-stag">Slide 2 / Tracao</span><h2>Metricas que impressionam</h2><p>Apresente seus numeros de forma clara e impactante.</p><div class="dk-metrics"><div class="dk-metric"><div class="dk-metric-val">10x</div><div class="dk-metric-label">Mais rapido que manual</div></div><div class="dk-metric"><div class="dk-metric-val">500+</div><div class="dk-metric-label">Decks gerados</div></div><div class="dk-metric"><div class="dk-metric-val">95%</div><div class="dk-metric-label">Satisfacao</div></div></div></div>
+    <div class="dk-slide" id="features"><span class="dk-slide-num">03</span><span class="dk-stag">Slide 3 / Features</span><h2>Tudo que voce precisa</h2><div class="dk-features"><div class="dk-feat"><span class="dk-feat-ico">&#127919;</span><div><h3>Estrutura Y Combinator</h3><p>Segue o modelo consagrado de pitch decks.</p></div></div><div class="dk-feat"><span class="dk-feat-ico">&#128200;</span><div><h3>Tracao + Metricas</h3><p>Seção dedicada para seus numeros.</p></div></div><div class="dk-feat"><span class="dk-feat-ico">&#128161;</span><div><h3>Problema-Solucao</h3><p>Framework claro de necessidade e proposta.</p></div></div><div class="dk-feat"><span class="dk-feat-ico">&#128176;</span><div><h3>Ask + Uso de Fundos</h3><p>Defina claramente o que busca.</p></div></div></div></div>
+    <div class="dk-form-slide" id="build">
+      <h2>&#127912; Construa seu Deck</h2>
+      <p class="dk-form-sub">Preencha os campos abaixo para gerar um pitch deck estruturado</p>
+      <form id="appForm">
+        <div class="dk-form-grid">
+          <div class="dk-field"><label>Problema</label><textarea id="problem" rows="3" required placeholder="Qual problema voce resolve?"></textarea></div>
+          <div class="dk-field"><label>Solucao</label><textarea id="solution" rows="3" required placeholder="Como voce resolve esse problema?"></textarea></div>
+          <div class="dk-field"><label>Mercado (TAM/SAM/SOM)</label><input type="text" id="market" required placeholder="Ex: Mercado de SaaS no Brasil, R$10B"></div>
+          <div class="dk-field"><label>Tracao</label><input type="text" id="traction" required placeholder="Ex: 500 usuarios, R$20k MRR"></div>
+          <div class="dk-field full"><label>Ask / Captacao</label><input type="text" id="ask" required placeholder="Ex: R$500k pre-seed para crescimento"></div>
         </div>
-        <div id="output" class="output-content"></div>
+        <button type="submit" class="dk-submit">&#127912; Gerar Pitch Deck</button>
+      </form>
+      <div class="dk-output" id="outputSection">
+        <div class="dk-output-head"><h3>&#127912; Seu Pitch Deck</h3><div class="dk-out-actions"><button onclick="copyOutput()" class="dk-out-btn">&#128203; Copiar</button><button onclick="downloadPDF()" class="dk-out-btn">&#128196; Download PDF</button></div></div>
+        <div class="dk-result" id="output"></div>
       </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Gerando seu pitch deck...</p>
     </div>
+    <footer class="dk-foot"><a href="/">&#8592; Voltar ao Portfolio</a> &middot; DeckBuilder &#127912;</footer>
   </div>
-
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Construindo deck...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('pitchForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const input = `
-Problema: ${document.getElementById('problem').value}
-Solução: ${document.getElementById('solution').value}
-Mercado: ${document.getElementById('market').value || 'Não especificado'}
-Tração: ${document.getElementById('traction').value || 'Não especificado'}
-Raising: ${document.getElementById('ask').value || 'Não especificado'}
-      `;
-      
-      showLoading();
-      
-      try {
-        const response = await fetch('http://localhost:8790/apps/pitch-deck/run', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ input })
-        });
-        
-        const data = await response.json();
-        hideLoading();
-        
-        if (data.ok) {
-          showOutput(data.output);
-        } else {
-          alert('Erro: ' + (data.error || 'Erro desconhecido'));
-        }
-      } catch (error) {
-        hideLoading();
-        alert('Erro de conexão: ' + error.message);
-      }
-    });
-
-    function showOutput(content) {
-      document.getElementById('outputSection').classList.remove('hidden');
-      document.getElementById('output').innerHTML = formatMarkdown(content);
-      document.getElementById('output').dataset.raw = content;
-    }
-
-    function formatMarkdown(text) {
-      return text
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/\n/g, '<br>');
-    }
-
-    function copyToClipboard() {
-      const text = document.getElementById('output').dataset.raw;
-      navigator.clipboard.writeText(text).then(() => {
-        showAlert ('Copiado para área de transferência!');
-      });
-    }
-
-    function downloadPDF() {
-      showAlert('Funcionalidade de download em breve!', 'info');
-    }
+    function formatMarkdown(t){return t.replace(/## (.*)/g,'<h2>$1</h2>').replace(/### (.*)/g,'<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}
+    document.getElementById('appForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('pitch-deck',{input:JSON.stringify({problem:document.getElementById('problem').value,solution:document.getElementById('solution').value,market:document.getElementById('market').value,traction:document.getElementById('traction').value,ask:document.getElementById('ask').value})});hideLoading();if(data.ok){const os=document.getElementById('outputSection');os.classList.add('show');os.style.display='block';document.getElementById('output').innerHTML=formatMarkdown(data.output);document.getElementById('output').dataset.raw=data.output}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro de conexao','error')}});
+    function copyOutput(){navigator.clipboard.writeText(document.getElementById('output').dataset.raw).then(()=>showAlert('Copiado!'))}
+    function downloadPDF(){showAlert('PDF export em breve!')}
   </script>
 </body>
 </html>

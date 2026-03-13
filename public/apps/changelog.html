@@ -1,252 +1,95 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShipLog — Release Notes com IA</title>
+  <title>ShipLog  Release Notes Terminal</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{--cl-indigo:#6366f1;--cl-indigo-light:#818cf8;--cl-indigo-dark:#4f46e5;--cl-bg:#0f172a;--cl-surface:#1e293b;--cl-text:#e2e8f0;--cl-muted:#94a3b8;--cl-border:rgba(99,102,241,.15);--cl-grad:linear-gradient(135deg,#6366f1,#8b5cf6)}
-    body.app-changelog{background:var(--cl-bg);color:var(--cl-text)}
-
-    .cl-nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);background:rgba(15,23,42,.88);border-bottom:1px solid var(--cl-border);padding:0 24px}
-    .cl-nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
-    .cl-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
-    .cl-logo-icon{font-size:1.7rem}
-    .cl-logo-text{font-weight:800;font-size:1.25rem}
-    .cl-logo-text span{color:var(--cl-indigo-light)}
-    .cl-nav-links{display:flex;gap:24px;align-items:center}
-    .cl-nav-links a{color:var(--cl-muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
-    .cl-nav-links a:hover{color:#fff}
-    .cl-nav-cta{background:var(--cl-indigo)!important;color:#fff!important;padding:8px 20px!important;border-radius:8px!important;font-weight:600!important}
-    .cl-nav-back{color:#64748b!important;font-size:13px!important}
-
-    .cl-hero{text-align:center;padding:90px 24px 70px;position:relative;overflow:hidden}
-    .cl-hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(99,102,241,.12) 0%,transparent 70%);pointer-events:none}
-    .cl-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);color:var(--cl-indigo-light);padding:6px 16px;border-radius:30px;font-size:13px;font-weight:600;margin-bottom:24px}
-    .cl-hero h1{font-size:clamp(2.4rem,5.5vw,4rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;color:#fff;max-width:700px;margin:0 auto 18px}
-    .cl-hero h1 .cl-grad{background:var(--cl-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .cl-hero-sub{font-size:1.15rem;color:var(--cl-muted);max-width:520px;margin:0 auto 36px;line-height:1.7}
-    .cl-hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-    .cl-btn{background:var(--cl-indigo);color:#fff;padding:14px 32px;border-radius:12px;font-weight:700;font-size:16px;border:none;cursor:pointer;transition:all .25s;font-family:var(--font);box-shadow:0 4px 20px rgba(99,102,241,.3);text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-    .cl-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(99,102,241,.4)}
-    .cl-btn-out{background:transparent;color:var(--cl-muted);padding:14px 32px;border-radius:12px;font-weight:600;font-size:16px;border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:all .25s;font-family:var(--font);text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-    .cl-btn-out:hover{border-color:rgba(255,255,255,.3);color:#fff}
-    .cl-hero-proof{display:flex;justify-content:center;gap:40px;margin-top:48px;padding-top:28px;border-top:1px solid var(--cl-border);flex-wrap:wrap}
-    .cl-pv{font-size:1.7rem;font-weight:800;color:#fff;display:block}
-    .cl-pl{font-size:13px;color:#64748b}
-
-    .cl-section{max-width:1200px;margin:0 auto;padding:70px 24px}
-    .cl-section-header{text-align:center;margin-bottom:48px}
-    .cl-tag{display:inline-block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--cl-indigo-light);margin-bottom:10px}
-    .cl-section-header h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;color:#fff;margin-bottom:10px}
-    .cl-section-header p{color:var(--cl-muted);font-size:1.05rem;max-width:520px;margin:0 auto}
-
-    .cl-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}
-    .cl-feature{background:rgba(255,255,255,.03);border:1px solid var(--cl-border);border-radius:16px;padding:28px 24px;transition:all .3s}
-    .cl-feature:hover{background:rgba(255,255,255,.05);border-color:rgba(99,102,241,.3);transform:translateY(-4px)}
-    .cl-feature-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:16px}
-    .cl-fi-indigo{background:rgba(99,102,241,.12)}
-    .cl-fi-green{background:rgba(34,197,94,.12)}
-    .cl-fi-amber{background:rgba(245,158,11,.12)}
-    .cl-fi-cyan{background:rgba(6,182,212,.12)}
-    .cl-feature h3{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:6px}
-    .cl-feature p{color:var(--cl-muted);font-size:.9rem;line-height:1.6}
-
-    .cl-demo-section{background:radial-gradient(ellipse at 30% 50%,rgba(99,102,241,.06) 0%,transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(139,92,246,.04) 0%,transparent 60%);border-top:1px solid var(--cl-border);border-bottom:1px solid var(--cl-border);padding:70px 24px}
-    .cl-demo-wrap{max-width:900px;margin:0 auto}
-    .cl-browser{background:var(--cl-surface);border-radius:16px;border:1px solid rgba(255,255,255,.08);overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,.4)}
-    .cl-toolbar{display:flex;align-items:center;gap:8px;padding:14px 20px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)}
-    .cl-dot{width:12px;height:12px;border-radius:50%}
-    .cl-dot-r{background:#ef4444}.cl-dot-y{background:#f59e0b}.cl-dot-g{background:#22c55e}
-    .cl-url{flex:1;text-align:center;font-size:12px;color:#64748b;background:rgba(255,255,255,.04);padding:6px 16px;border-radius:6px;margin-left:12px}
-    .cl-body{padding:28px}
-
-    .cl-form label{font-weight:600;color:var(--cl-text);margin-bottom:6px;display:block;font-size:14px}
-    .cl-form textarea{width:100%;padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:10px;font-family:'Fira Code',monospace;font-size:13px;resize:vertical;min-height:120px;background:rgba(255,255,255,.04);color:var(--cl-text);transition:border-color .2s}
-    .cl-form textarea:focus{outline:none;border-color:var(--cl-indigo);box-shadow:0 0 0 3px rgba(99,102,241,.15)}
-    .cl-output{margin-top:24px}
-    .cl-output-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-    .cl-output-content{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:24px;line-height:1.8;font-size:14px}
-    .cl-output-content h2{font-size:1.3rem;font-weight:700;color:#fff;margin:16px 0 8px;border-bottom:1px solid var(--cl-border);padding-bottom:8px}
-    .cl-output-content h3{font-size:1rem;font-weight:700;padding:4px 12px;border-radius:6px;display:inline-block;margin:12px 0 6px}
-    .cl-output-content .release-subtitle{font-size:1rem;font-weight:700;padding:4px 12px;border-radius:6px;display:inline-block;margin:12px 0 6px}
-    .cl-cat-added{background:rgba(34,197,94,.12);color:#22c55e}
-    .cl-cat-improved{background:rgba(59,130,246,.12);color:#3b82f6}
-    .cl-cat-fixed{background:rgba(245,158,11,.12);color:#f59e0b}
-    .cl-btn-sm{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--cl-muted);cursor:pointer;transition:all .2s;font-family:var(--font)}
-    .cl-btn-sm:hover{border-color:var(--cl-indigo);color:var(--cl-indigo-light)}
-
-    .cl-pricing{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px;max-width:940px;margin:0 auto}
-    .cl-price-card{background:rgba(255,255,255,.03);border:1px solid var(--cl-border);border-radius:16px;padding:34px 26px;text-align:center;transition:all .3s}
-    .cl-price-card.popular{border-color:var(--cl-indigo);position:relative;background:rgba(99,102,241,.04)}
-    .cl-price-card.popular::before{content:'Mais Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--cl-indigo);color:#fff;padding:4px 18px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase}
-    .cl-pn{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:6px}
-    .cl-pa{font-size:2.6rem;font-weight:800;color:#fff;margin-bottom:4px}
-    .cl-pa span{font-size:1rem;font-weight:500;color:var(--cl-muted)}
-    .cl-pd{color:var(--cl-muted);font-size:.88rem;margin-bottom:22px}
-    .cl-pf{list-style:none;text-align:left;margin-bottom:24px;padding:0}
-    .cl-pf li{padding:7px 0;font-size:14px;color:var(--cl-text);display:flex;gap:10px;align-items:center}
-    .cl-pf li::before{content:'✓';color:var(--cl-indigo-light);font-weight:700;width:18px;height:18px;border-radius:50%;background:rgba(99,102,241,.1);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
-
-    .cl-cta{text-align:center;padding:90px 24px;position:relative}
-    .cl-cta::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:500px;height:350px;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%);pointer-events:none}
-    .cl-cta h2{font-size:clamp(2rem,4vw,2.8rem);font-weight:800;color:#fff;margin-bottom:14px}
-    .cl-cta p{color:var(--cl-muted);font-size:1.1rem;margin-bottom:32px}
-
-    .cl-footer{padding:28px 24px;border-top:1px solid var(--cl-border);text-align:center}
-    .cl-footer p{color:#475569;font-size:13px}
-    .cl-footer a{color:#64748b;text-decoration:none}
-    .cl-footer a:hover{color:#fff}
-
-    @media(max-width:768px){.cl-hero{padding:60px 20px 50px}.cl-hero h1{font-size:2rem}.cl-nav-links a:not(.cl-nav-cta):not(.cl-nav-back){display:none}}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-changelog{background:#0a0a0a;color:#00ff41;font-family:'Fira Code',monospace;position:relative}
+    body.app-changelog::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,.03) 2px,rgba(0,255,65,.03) 4px);z-index:9999}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0a0a0a}::-webkit-scrollbar-thumb{background:#00ff41;border-radius:3px}
+    .cl-top{background:#111;border-bottom:1px solid #222;padding:0 20px;position:sticky;top:0;z-index:100}
+    .cl-top-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:48px}
+    .cl-tabs{display:flex;gap:0}
+    .cl-tab{padding:12px 18px;font-size:12px;color:#666;text-decoration:none;border-right:1px solid #222;transition:color .2s}
+    .cl-tab:hover{color:#00ff41}
+    .cl-tab.active{color:#00ff41;background:#0a0a0a;border-bottom:2px solid #00ff41}
+    .cl-tab .x{color:#444;margin-left:8px;font-size:10px}
+    .cl-right{display:flex;gap:12px;align-items:center}
+    .cl-right a{color:#555;text-decoration:none;font-size:11px;transition:color .2s}
+    .cl-right a:hover{color:#00ff41}
+    .cl-term{background:#111;border:1px solid #222;border-radius:8px;overflow:hidden;margin:0 auto;max-width:900px}
+    .cl-titlebar{display:flex;align-items:center;padding:10px 16px;background:#1a1a1a;border-bottom:1px solid #222;gap:8px}
+    .cl-dot{width:12px;height:12px;border-radius:50%}.cl-dr{background:#ff5f56}.cl-dy{background:#ffbd2e}.cl-dg{background:#27c93f}
+    .cl-titlebar-text{flex:1;text-align:center;color:#555;font-size:11px}
+    .cl-body{padding:24px;font-size:13px;line-height:1.8}
+    .cl-prompt{color:#00ff41}.cl-cmd{color:#fff}.cl-comment{color:#555}
+    .cl-cursor{display:inline-block;width:8px;height:16px;background:#00ff41;animation:blink 1s step-end infinite;vertical-align:middle;margin-left:2px}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .cl-hero{padding:60px 20px;max-width:1000px;margin:0 auto}
+    .cl-hero-term{margin-bottom:0}
+    .cl-hero .cl-body{min-height:200px}
+    .cl-hero h1{color:#00ff41;font-size:clamp(1.2rem,3vw,1.6rem);font-weight:700;margin:12px 0}
+    .cl-hero .sub{color:#888;font-size:13px;line-height:1.7;margin:8px 0 20px}
+    .cl-hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+    .cl-btn{background:#00ff41;color:#0a0a0a;padding:10px 24px;border:none;border-radius:4px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+    .cl-btn:hover{background:#00cc33;box-shadow:0 0 20px rgba(0,255,65,.3)}
+    .cl-btn-g{background:transparent;color:#00ff41;border:1px solid #00ff41;padding:10px 24px;border-radius:4px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .2s}
+    .cl-btn-g:hover{background:rgba(0,255,65,.1)}
+    .cl-section{max-width:1000px;margin:0 auto;padding:50px 20px}
+    .cl-section-title{color:#00ff41;font-size:14px;margin-bottom:24px}
+    .cl-features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+    .cl-feat{background:#111;border:1px solid #222;border-radius:6px;padding:16px 20px;transition:border-color .3s}
+    .cl-feat:hover{border-color:#00ff41}
+    .cl-feat h3{color:#00ff41;font-size:13px;margin-bottom:4px}
+    .cl-feat p{color:#888;font-size:12px;line-height:1.6}
+    .cl-feat .arrow{color:#00ff41;margin-right:6px}
+    .cl-demo{max-width:900px;margin:0 auto;padding:50px 20px}
+    .cl-demo textarea{width:100%;padding:16px;background:#0d0d0d;color:#00ff41;border:1px solid #222;border-radius:6px;font-family:'Fira Code',monospace;font-size:13px;resize:vertical;min-height:120px;transition:all .2s}
+    .cl-demo textarea:focus{outline:none;border-color:#00ff41;box-shadow:0 0 12px rgba(0,255,65,.15)}
+    .cl-demo textarea::placeholder{color:#333}
+    .cl-demo label{color:#00ff41;font-size:12px;display:block;margin-bottom:8px}
+    .cl-output{margin-top:20px;display:none}
+    .cl-output.show{display:block}
+    .cl-output-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .cl-output-head h3{color:#00ff41;font-size:13px}
+    .cl-output-box{background:#0d0d0d;border:1px solid #222;border-radius:6px;padding:20px;line-height:1.8;font-size:13px;color:#ccc}
+    .cl-output-box h2{color:#fff;font-size:1.1rem;border-bottom:1px solid #222;padding-bottom:6px;margin:12px 0 8px}
+    .cl-output-box .cat-added{color:#00ff41;font-weight:700}
+    .cl-output-box .cat-improved{color:#00d4ff;font-weight:700}
+    .cl-output-box .cat-fixed{color:#ffb800;font-weight:700}
+    .cl-btn-sm{background:transparent;border:1px solid #333;color:#888;padding:4px 12px;border-radius:4px;font-family:inherit;font-size:11px;cursor:pointer;transition:all .2s}
+    .cl-btn-sm:hover{border-color:#00ff41;color:#00ff41}
+    .cl-pricing{max-width:900px;margin:0 auto;padding:50px 20px}
+    .cl-price-term .cl-body{font-size:12px;line-height:2}
+    .cl-price-row{display:flex;justify-content:space-between;border-bottom:1px dashed #222;padding:4px 0}
+    .cl-price-row .name{color:#00ff41}.cl-price-row .price{color:#fff}
+    .cl-price-feat{color:#555;margin-left:20px}
+    .cl-cta-section{text-align:center;padding:60px 20px}
+    .cl-cta-section h2{color:#00ff41;font-size:16px;margin-bottom:20px}
+    .cl-foot{text-align:center;padding:20px;color:#333;font-size:11px;border-top:1px solid #1a1a1a}
+    .cl-foot a{color:#555;text-decoration:none}.cl-foot a:hover{color:#00ff41}
+    .cl-ascii{color:#222;font-size:11px;text-align:center;padding:8px;user-select:none}
+    @media(max-width:768px){.cl-tab:not(.active){display:none}.cl-features{grid-template-columns:1fr}}
   </style>
 </head>
 <body class="app-page app-changelog">
-  <nav class="cl-nav">
-    <div class="cl-nav-inner">
-      <a href="/" class="cl-logo"><span class="cl-logo-icon">📰</span><span class="cl-logo-text">Ship<span>Log</span></span></a>
-      <div class="cl-nav-links">
-        <a href="/" class="cl-nav-back">← Voltar</a>
-        <a href="#features">Features</a>
-        <a href="#demo">Demo</a>
-        <a href="#pricing">Preços</a>
-        <a href="#demo" class="cl-nav-cta">Testar Grátis</a>
-      </div>
-    </div>
-  </nav>
-
-  <section class="cl-hero">
-    <div class="cl-badge">📰 AI-Powered · Categorizado · User-facing</div>
-    <h1>Release notes que<br><span class="cl-grad">impressionam</span></h1>
-    <p class="cl-hero-sub">Cole suas mudanças brutas e a IA transforma em changelogs categorizados, bonitos e prontos para publicar.</p>
-    <div class="cl-hero-actions">
-      <a href="#demo" class="cl-btn">🚀 Gerar Changelog Grátis</a>
-      <a href="#features" class="cl-btn-out">📋 Ver Features</a>
-    </div>
-    <div class="cl-hero-proof">
-      <div><span class="cl-pv">AI</span><span class="cl-pl">Auto-categorize</span></div>
-      <div><span class="cl-pv">3</span><span class="cl-pl">Categorias inteligentes</span></div>
-      <div><span class="cl-pv">1-click</span><span class="cl-pl">Copy & publish</span></div>
-      <div><span class="cl-pv">∞</span><span class="cl-pl">Releases</span></div>
-    </div>
-  </section>
-
-  <section class="cl-section" id="features">
-    <div class="cl-section-header">
-      <span class="cl-tag">Features</span>
-      <h2>De commits bagunçados a release notes incríveis</h2>
-      <p>Tudo que você precisa para manter seus usuários informados.</p>
-    </div>
-    <div class="cl-features">
-      <div class="cl-feature"><div class="cl-feature-icon cl-fi-green">✅</div><h3>Added / Fixed / Improved</h3><p>IA categoriza automaticamente cada mudança em seções padronizadas e coloridas.</p></div>
-      <div class="cl-feature"><div class="cl-feature-icon cl-fi-indigo">📝</div><h3>Markdown Export</h3><p>Output em Markdown formatado, pronto para GitHub, Notion ou seu blog.</p></div>
-      <div class="cl-feature"><div class="cl-feature-icon cl-fi-amber">👤</div><h3>User-Facing Copy</h3><p>Linguagem clara e amigável — sem jargão técnico para seus usuários.</p></div>
-      <div class="cl-feature"><div class="cl-feature-icon cl-fi-cyan">📊</div><h3>Multi-version</h3><p>Gere changelogs para múltiplas versões e mantenha um histórico organizado.</p></div>
-      <div class="cl-feature"><div class="cl-feature-icon cl-fi-indigo">⏱️</div><h3>Timeline View</h3><p>Visualize a evolução do produto versão a versão em uma timeline bonita.</p></div>
-      <div class="cl-feature"><div class="cl-feature-icon cl-fi-green">🔌</div><h3>API & Webhooks</h3><p>Integre com seu CI/CD para gerar changelogs automaticamente a cada deploy.</p></div>
-    </div>
-  </section>
-
-  <section class="cl-demo-section" id="demo">
-    <div class="cl-demo-wrap">
-      <div class="cl-section-header">
-        <span class="cl-tag">Playground</span>
-        <h2>Teste ao vivo</h2>
-        <p>Cole suas mudanças e veja a mágica acontecer.</p>
-      </div>
-      <div class="cl-browser">
-        <div class="cl-toolbar">
-          <span class="cl-dot cl-dot-r"></span><span class="cl-dot cl-dot-y"></span><span class="cl-dot cl-dot-g"></span>
-          <span class="cl-url">app.shiplog.dev/generate</span>
-        </div>
-        <div class="cl-body">
-          <div class="cl-form">
-            <form id="appForm">
-              <label for="input">Mudanças desta release</label>
-              <textarea id="input" rows="6" required placeholder="v2.3.0 - Adicionado modo escuro, Corrigido bug no login que afetava Safari, Melhorado tempo de carregamento em 40%, Dashboard agora atualiza em tempo real"></textarea>
-              <div style="margin-top:16px">
-                <button type="submit" class="cl-btn" style="width:100%;justify-content:center">📰 Gerar Release Notes com IA</button>
-              </div>
-            </form>
-          </div>
-          <div class="cl-output hidden" id="outputSection">
-            <div class="cl-output-header">
-              <h3 style="font-weight:700;font-size:1.1rem;color:#fff">📋 Release Notes</h3>
-              <button onclick="copyOutput()" class="cl-btn-sm">📋 Copiar</button>
-            </div>
-            <div class="cl-output-content" id="output"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="cl-section" id="pricing">
-    <div class="cl-section-header">
-      <span class="cl-tag">Preços</span>
-      <h2>Simples para devs</h2>
-      <p>Foque no código, a gente cuida do changelog.</p>
-    </div>
-    <div class="cl-pricing">
-      <div class="cl-price-card">
-        <div class="cl-pn">Free</div><div class="cl-pa">$0<span>/mês</span></div><div class="cl-pd">Para side projects</div>
-        <ul class="cl-pf"><li>5 changelogs/mês</li><li>Categorização AI</li><li>Copiar texto</li></ul>
-        <a href="#demo" class="cl-btn-out" style="width:100%;justify-content:center">Começar Grátis</a>
-      </div>
-      <div class="cl-price-card popular">
-        <div class="cl-pn">Pro</div><div class="cl-pa">$9<span>/mês</span></div><div class="cl-pd">Para startups e SaaS</div>
-        <ul class="cl-pf"><li>Changelogs ilimitados</li><li>Markdown export</li><li>Custom branding</li><li>Changelog page hosted</li><li>API access</li></ul>
-        <button class="cl-btn" style="width:100%;justify-content:center">Assinar Pro</button>
-      </div>
-      <div class="cl-price-card">
-        <div class="cl-pn">Team</div><div class="cl-pa">$29<span>/mês</span></div><div class="cl-pd">Para times de produto</div>
-        <ul class="cl-pf"><li>Tudo do Pro</li><li>Múltiplos projetos</li><li>CI/CD webhooks</li><li>Team collaboration</li><li>Suporte prioritário</li></ul>
-        <button class="cl-btn-out" style="width:100%;justify-content:center">Falar com Vendas</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="cl-cta">
-    <h2>Pronto para changelogs que impressionam?</h2>
-    <p>Comece em segundos. Zero setup.</p>
-    <a href="#demo" class="cl-btn">📰 Gerar Meu Primeiro Changelog</a>
-  </section>
-
-  <footer class="cl-footer"><p>ShipLog · Built with ❤️ · <a href="/">Voltar ao Portfolio</a></p></footer>
-
+  <nav class="cl-top"><div class="cl-top-inner"><div class="cl-tabs"><a href="/" class="cl-tab">~/home <span class="x">[x]</span></a><a href="#" class="cl-tab active">shiplog <span class="x">[x]</span></a></div><div class="cl-right"><a href="#features">features</a><a href="#demo">demo</a><a href="#pricing">pricing</a></div></div></nav>
+  <section class="cl-hero"><div class="cl-term cl-hero-term"><div class="cl-titlebar"><span class="cl-dot cl-dr"></span><span class="cl-dot cl-dy"></span><span class="cl-dot cl-dg"></span><span class="cl-titlebar-text">shiplog@v2.3 ~ bash</span></div><div class="cl-body"><span class="cl-prompt">$</span> <span class="cl-cmd">shiplog generate --format=markdown</span><br><br><h1>> Release notes que impressionam_<span class="cl-cursor"></span></h1><p class="sub">Cole suas mudancas brutas e a IA transforma em changelogs categorizados, bonitos e prontos para publicar. Added / Improved / Fixed  tudo automatico.</p><div class="cl-hero-btns"><a href="#demo" class="cl-btn">$ gerar changelog</a><a href="#features" class="cl-btn-g">man shiplog</a></div></div></div></section>
+  <div class="cl-ascii">&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</div>
+  <section class="cl-section" id="features"><div class="cl-section-title"><span class="cl-prompt">$</span> <span class="cl-cmd">shiplog --list-features</span></div><div class="cl-features"><div class="cl-feat"><h3><span class="arrow">&gt;</span> Auto-Categorize</h3><p>IA separa mudancas em Added, Improved e Fixed automaticamente.</p></div><div class="cl-feat"><h3><span class="arrow">&gt;</span> Markdown Export</h3><p>Output pronto para GitHub, Notion ou seu blog.</p></div><div class="cl-feat"><h3><span class="arrow">&gt;</span> User-Facing Copy</h3><p>Linguagem clara, sem jargao tecnico.</p></div><div class="cl-feat"><h3><span class="arrow">&gt;</span> Multi-version</h3><p>Changelogs para multiplas versoes organizados.</p></div><div class="cl-feat"><h3><span class="arrow">&gt;</span> Timeline View</h3><p>Evolucao do produto versao a versao.</p></div><div class="cl-feat"><h3><span class="arrow">&gt;</span> API &amp; Webhooks</h3><p>Integre com CI/CD para gerar automaticamente.</p></div></div></section>
+  <section class="cl-demo" id="demo"><div class="cl-term"><div class="cl-titlebar"><span class="cl-dot cl-dr"></span><span class="cl-dot cl-dy"></span><span class="cl-dot cl-dg"></span><span class="cl-titlebar-text">shiplog generate</span></div><div class="cl-body"><form id="appForm"><label><span class="cl-prompt">$</span> <span class="cl-cmd">echo "suas mudancas" | shiplog</span></label><textarea id="input" rows="6" required placeholder="v2.3.0 - Adicionado modo escuro, Corrigido bug no login Safari, Melhorado carregamento em 40%"></textarea><div style="margin-top:12px"><button type="submit" class="cl-btn" style="width:100%">$ shiplog generate --ai</button></div></form><div class="cl-output" id="outputSection"><div class="cl-output-head"><h3><span class="cl-prompt">&gt;</span> output.md</h3><button onclick="copyOutput()" class="cl-btn-sm">cp output | clipboard</button></div><div class="cl-output-box" id="output"></div></div></div></div></section>
+  <section class="cl-pricing" id="pricing"><div class="cl-term"><div class="cl-titlebar"><span class="cl-dot cl-dr"></span><span class="cl-dot cl-dy"></span><span class="cl-dot cl-dg"></span><span class="cl-titlebar-text">cat pricing.txt</span></div><div class="cl-body cl-price-term"><div class="cl-price-row"><span class="name">FREE</span><span class="price">$0/mes</span></div><div class="cl-price-feat">5 changelogs/mes | Categorizacao AI | Copy</div><br><div class="cl-price-row"><span class="name">PRO (popular)</span><span class="price">$9/mes</span></div><div class="cl-price-feat">Ilimitado | Markdown export | Custom brand | API | Hosted page</div><br><div class="cl-price-row"><span class="name">TEAM</span><span class="price">$29/mes</span></div><div class="cl-price-feat">Tudo do Pro | Multi-projeto | CI/CD hooks | Colaboracao | Suporte</div></div></div></section>
+  <section class="cl-cta-section"><h2><span class="cl-prompt">$</span> <span class="cl-cmd">shiplog --signup --plan=free</span><span class="cl-cursor"></span></h2><a href="#demo" class="cl-btn">Executar comando</a></section>
+  <footer class="cl-foot"><span class="cl-prompt">$</span> echo "ShipLog v2.3 | <a href="/">cd ~</a>"</footer>
   <div id="loading" class="loading hidden"><div class="spinner"></div><p>Gerando changelog...</p></div>
-
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('appForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      try {
-        const data = await apiCall('changelog', { input: document.getElementById('input').value });
-        hideLoading();
-        if (data.ok) {
-          document.getElementById('outputSection').classList.remove('hidden');
-          const html = data.output
-            .replace(/^### (Added)/gim, '<h3 class="release-subtitle cl-cat-added">✅ $1</h3>')
-            .replace(/^### (Improved)/gim, '<h3 class="release-subtitle cl-cat-improved">⬆️ $1</h3>')
-            .replace(/^### (Fixed)/gim, '<h3 class="release-subtitle cl-cat-fixed">🔧 $1</h3>')
-            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-            .replace(/\n/g, '<br>');
-          document.getElementById('output').innerHTML = html;
-          document.getElementById('output').dataset.raw = data.output;
-        } else {
-          showAlert(data.error || 'Erro ao gerar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-    function copyOutput() {
-      const text = document.getElementById('output').dataset.raw;
-      navigator.clipboard.writeText(text).then(() => showAlert('Copiado!'));
-    }
+    document.getElementById('appForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('changelog',{input:document.getElementById('input').value});hideLoading();if(data.ok){const out=document.getElementById('outputSection');out.classList.add('show');out.style.display='block';const html=data.output.replace(/^### (Added)/gim,'<span class="cat-added">+ $1</span>').replace(/^### (Improved)/gim,'<span class="cat-improved">^ $1</span>').replace(/^### (Fixed)/gim,'<span class="cat-fixed">! $1</span>').replace(/^## (.*$)/gim,'<h2>$1</h2>').replace(/\n/g,'<br>');document.getElementById('output').innerHTML=html;document.getElementById('output').dataset.raw=data.output}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro de conexao','error')}});
+    function copyOutput(){navigator.clipboard.writeText(document.getElementById('output').dataset.raw).then(()=>showAlert('Copiado!'))}
   </script>
 </body>
 </html>

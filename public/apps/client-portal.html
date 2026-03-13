@@ -1,169 +1,115 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Client Portal</title>
+  <title>ClientHub &#8212; Client Portal</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-client-portal{background:#f4f5f7;color:#172b4d;font-family:'Inter',sans-serif;display:flex;min-height:100vh}
+    .cp-sidebar{width:240px;background:#0c1f3f;color:white;padding:0;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;bottom:0;left:0;z-index:100}
+    @media(max-width:768px){.cp-sidebar{width:56px}.cp-sidebar .cp-sb-text{display:none}.cp-sidebar .cp-sb-section-title{display:none}}
+    .cp-sb-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+    .cp-sb-logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4c9aff,#2684ff);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white;flex-shrink:0}
+    .cp-sb-brand{font-weight:700;font-size:15px}
+    .cp-sb-nav{flex:1;padding:12px 8px;overflow-y:auto}
+    .cp-sb-section-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.35);padding:8px 12px;margin-top:8px}
+    .cp-sb-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;color:rgba(255,255,255,.65);font-size:13px;cursor:pointer;transition:all .15s;margin-bottom:2px;text-decoration:none}
+    .cp-sb-item:hover{background:rgba(255,255,255,.06);color:white}
+    .cp-sb-item.active{background:rgba(76,154,255,.15);color:#4c9aff}
+    .cp-sb-ico{font-size:16px;flex-shrink:0;width:20px;text-align:center}
+    .cp-sb-foot{padding:12px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:11px}
+    .cp-sb-foot a{color:rgba(255,255,255,.4);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .2s}
+    .cp-sb-foot a:hover{color:rgba(255,255,255,.8)}
+    .cp-main{flex:1;margin-left:240px;min-height:100vh}
+    @media(max-width:768px){.cp-main{margin-left:56px}}
+    .cp-topbar{background:white;border-bottom:1px solid #e1e4e8;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:50}
+    .cp-topbar h1{font-size:16px;font-weight:700}
+    .cp-topbar-actions{display:flex;gap:8px}
+    .cp-tb-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid #e1e4e8;background:white;color:#172b4d}
+    .cp-tb-btn:hover{background:#f4f5f7}
+    .cp-tb-btn.primary{background:#2684ff;color:white;border-color:#2684ff}
+    .cp-tb-btn.primary:hover{background:#1a73e8}
+    .cp-body{padding:24px}
+    .cp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+    @media(max-width:900px){.cp-stats{grid-template-columns:1fr 1fr}}
+    @media(max-width:500px){.cp-stats{grid-template-columns:1fr}}
+    .cp-stat{background:white;border:1px solid #e1e4e8;border-radius:12px;padding:20px}
+    .cp-stat-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#8993a4;margin-bottom:6px}
+    .cp-stat-val{font-size:28px;font-weight:800}
+    .cp-stat-val.blue{color:#2684ff}.cp-stat-val.green{color:#36b37e}.cp-stat-val.orange{color:#ff991f}.cp-stat-val.purple{color:#6554c0}
+    .cp-kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+    @media(max-width:768px){.cp-kanban{grid-template-columns:1fr}}
+    .cp-col{background:#ebecf0;border-radius:12px;padding:12px;min-height:200px}
+    .cp-col-head{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#5e6c84;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+    .cp-col-count{background:#dfe1e6;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px}
+    .cp-card{background:white;border-radius:8px;padding:12px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.05);border-left:3px solid #2684ff;cursor:default}
+    .cp-card-title{font-size:13px;font-weight:600;margin-bottom:4px}
+    .cp-card-meta{font-size:11px;color:#8993a4}
+    .cp-section{background:white;border:1px solid #e1e4e8;border-radius:12px;padding:24px;margin-bottom:16px}
+    .cp-section h2{font-size:16px;font-weight:700;margin-bottom:4px}
+    .cp-section-sub{font-size:12px;color:#8993a4;margin-bottom:16px}
+    .cp-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    @media(max-width:600px){.cp-form-grid{grid-template-columns:1fr}}
+    .cp-field label{display:block;font-size:12px;font-weight:600;color:#5e6c84;margin-bottom:4px}
+    .cp-field input,.cp-field textarea,.cp-field select{width:100%;padding:10px;border:1px solid #e1e4e8;border-radius:8px;font-family:inherit;font-size:13px;color:#172b4d;transition:border-color .2s;background:white}
+    .cp-field input:focus,.cp-field textarea:focus,.cp-field select:focus{outline:none;border-color:#2684ff}
+    .cp-field textarea{resize:vertical;min-height:80px}
+    .cp-field.full{grid-column:1/-1}
+    .cp-action-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+    .cp-act{padding:8px 16px;border-radius:8px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid #e1e4e8;background:white;color:#172b4d}
+    .cp-act:hover{background:#f4f5f7}
+    .cp-act.primary{background:#2684ff;color:white;border-color:#2684ff}
+    .cp-act.primary:hover{background:#1a73e8}
+    .cp-project-list{margin-top:16px}
+    .cp-project{display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid #e1e4e8;border-radius:8px;margin-bottom:8px}
+    .cp-project-name{font-weight:600;font-size:13px}
+    .cp-project-client{font-size:12px;color:#8993a4}
+    .cp-badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase}
+    .cp-badge.planning{background:#deebff;color:#0052cc}
+    .cp-badge.active{background:#e3fcef;color:#006644}
+    .cp-badge.review{background:#fff0b3;color:#172b4d}
+    .cp-output{display:none;margin-top:16px}
+    .cp-output.show{display:block}
+    .cp-result{background:#f4f5f7;border:1px solid #e1e4e8;border-radius:8px;padding:16px;font-size:13px;line-height:1.7;color:#172b4d}
+  </style>
 </head>
 <body class="app-page app-client-portal">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">👥</span>
-        <h1>Client Portal</h1>
-      </div>
-      <p class="app-subtitle">Gerencie projetos e comunicação com clientes</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <h2>Novo Projeto</h2>
-        <form id="projectForm">
-          <div class="form-group">
-            <label for="name">Nome do Projeto *</label>
-            <input type="text" id="name" required placeholder="Projeto Alpha">
-          </div>
-          
-          <div class="form-group">
-            <label for="client">Cliente *</label>
-            <input type="text" id="client" required placeholder="Nome do cliente">
-          </div>
-
-          <div class="form-group">
-            <label for="description">Descrição</label>
-            <textarea id="description" rows="3" placeholder="Descrição do projeto"></textarea>
-          </div>
-
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">➕</span>
-            Criar Projeto
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section">
-        <div class="output-header">
-          <h2>Projetos</h2>
-          <button onclick="loadProjects()" class="btn-secondary">🔄 Atualizar</button>
-        </div>
-        <div id="projectsList"></div>
-      </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Processando...</p>
+  <aside class="cp-sidebar">
+    <div class="cp-sb-header"><div class="cp-sb-logo">CH</div><span class="cp-sb-brand cp-sb-text">ClientHub</span></div>
+    <nav class="cp-sb-nav">
+      <span class="cp-sb-section-title">Menu</span>
+      <a class="cp-sb-item active"><span class="cp-sb-ico">&#128200;</span><span class="cp-sb-text">Dashboard</span></a>
+      <a class="cp-sb-item" onclick="showSection('create')"><span class="cp-sb-ico">&#10133;</span><span class="cp-sb-text">Novo Projeto</span></a>
+      <a class="cp-sb-item" onclick="showSection('projects')"><span class="cp-sb-ico">&#128193;</span><span class="cp-sb-text">Projetos</span></a>
+      <span class="cp-sb-section-title">Acoes</span>
+      <a class="cp-sb-item" onclick="showSection('status')"><span class="cp-sb-ico">&#128260;</span><span class="cp-sb-text">Atualizar Status</span></a>
+      <a class="cp-sb-item" onclick="showSection('message')"><span class="cp-sb-ico">&#128172;</span><span class="cp-sb-text">Mensagem</span></a>
+    </nav>
+    <div class="cp-sb-foot"><a href="/"><span>&#8592;</span><span class="cp-sb-text">Voltar ao Portfolio</span></a></div>
+  </aside>
+  <main class="cp-main">
+    <div class="cp-topbar"><h1>&#128200; Dashboard</h1><div class="cp-topbar-actions"><button class="cp-tb-btn" onclick="loadProjects()">&#128260; Atualizar</button><button class="cp-tb-btn primary" onclick="showSection('create')">&#10133; Novo Projeto</button></div></div>
+    <div class="cp-body">
+      <div class="cp-stats"><div class="cp-stat"><div class="cp-stat-label">Total Projetos</div><div class="cp-stat-val blue" id="statTotal">0</div></div><div class="cp-stat"><div class="cp-stat-label">Ativos</div><div class="cp-stat-val green" id="statActive">0</div></div><div class="cp-stat"><div class="cp-stat-label">Planejamento</div><div class="cp-stat-val orange" id="statPlanning">0</div></div><div class="cp-stat"><div class="cp-stat-label">Em Revisao</div><div class="cp-stat-val purple" id="statReview">0</div></div></div>
+      <div class="cp-kanban" id="kanbanBoard"><div class="cp-col"><div class="cp-col-head">Planejamento <span class="cp-col-count" id="colPlan">0</span></div><div id="planCards"></div></div><div class="cp-col"><div class="cp-col-head">Em Progresso <span class="cp-col-count" id="colActive">0</span></div><div id="activeCards"></div></div><div class="cp-col"><div class="cp-col-head">Revisao <span class="cp-col-count" id="colReview">0</span></div><div id="reviewCards"></div></div></div>
+      <div class="cp-section" id="createSection" style="display:none"><h2>&#10133; Novo Projeto</h2><p class="cp-section-sub">Crie um novo projeto para seu cliente</p><form id="createForm"><div class="cp-form-grid"><div class="cp-field"><label>Nome do Projeto</label><input type="text" id="projName" required placeholder="Ex: Redesign Website"></div><div class="cp-field"><label>Cliente</label><input type="text" id="projClient" required placeholder="Ex: Empresa XYZ"></div><div class="cp-field full"><label>Descricao</label><textarea id="projDesc" rows="3" placeholder="Descreva o escopo do projeto..."></textarea></div></div><button type="submit" class="cp-act primary">&#10133; Criar Projeto</button></form><div class="cp-output" id="createOutput"><div class="cp-result" id="createResult"></div></div></div>
+      <div class="cp-section" id="statusSection" style="display:none"><h2>&#128260; Atualizar Status</h2><p class="cp-section-sub">Mude o status de um projeto</p><form id="statusForm"><div class="cp-form-grid"><div class="cp-field"><label>ID do Projeto</label><input type="text" id="statusProjId" required placeholder="ID do projeto"></div><div class="cp-field"><label>Novo Status</label><select id="statusVal"><option value="planning">Planejamento</option><option value="active">Ativo</option><option value="review">Revisao</option><option value="completed">Concluido</option></select></div></div><button type="submit" class="cp-act primary">&#128260; Atualizar</button></form><div class="cp-output" id="statusOutput"><div class="cp-result" id="statusResult"></div></div></div>
+      <div class="cp-section" id="messageSection" style="display:none"><h2>&#128172; Enviar Mensagem</h2><p class="cp-section-sub">Adicione uma mensagem a um projeto</p><form id="messageForm"><div class="cp-form-grid"><div class="cp-field"><label>ID do Projeto</label><input type="text" id="msgProjId" required placeholder="ID do projeto"></div><div class="cp-field"><label>Seu Nome</label><input type="text" id="msgFrom" required placeholder="Seu nome"></div><div class="cp-field full"><label>Mensagem</label><textarea id="msgContent" rows="3" required placeholder="Escreva sua mensagem..."></textarea></div></div><button type="submit" class="cp-act primary">&#128172; Enviar</button></form><div class="cp-output" id="msgOutput"><div class="cp-result" id="msgResult"></div></div></div>
+      <div class="cp-section" id="projectsSection" style="display:none"><h2>&#128193; Todos os Projetos</h2><div class="cp-project-list" id="projectList"></div></div>
     </div>
-  </div>
-
+  </main>
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Carregando...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('projectForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const data = await apiCall('client-portal', {
-          action: 'create-project',
-          project: {
-            name: document.getElementById('name').value,
-            client: document.getElementById('client').value,
-            description: document.getElementById('description').value
-          }
-        });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          showAlert('Projeto criado!');
-          document.getElementById('projectForm').reset();
-          loadProjects();
-        } else {
-          showAlert(data.error || 'Erro', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    async function loadProjects() {
-      showLoading();
-      try {
-        const data = await apiCall('client-portal', { action: 'list-projects' });
-        hideLoading();
-        
-        if (data.ok && data.projects.length > 0) {
-          document.getElementById('projectsList').innerHTML = data.projects.map(p => `
-            <div class="list-item">
-              <div class="row-between">
-                <div>
-                  <h4>${p.name}</h4>
-                  <p><strong>Cliente:</strong> ${p.client}</p>
-                  ${p.description ? `<p class="mt-8 muted">${p.description}</p>` : ''}
-                  <p class="mt-8"><span class="badge badge-info">${p.status}</span></p>
-                </div>
-              </div>
-              <div class="row-actions">
-                <button onclick="updateStatus('${p.id}', 'concluído')" class="btn-secondary">✅ Concluir</button>
-                <button onclick="addMessage('${p.id}')" class="btn-secondary">💬 Mensagem</button>
-              </div>
-            </div>
-          `).join('');
-        } else {
-          document.getElementById('projectsList').innerHTML = `
-            <div class="empty-state">
-              <div class="empty-state-icon">👥</div>
-              <p>Nenhum projeto criado</p>
-            </div>
-          `;
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro ao carregar', 'error');
-      }
-    }
-
-    async function updateStatus(id, status) {
-      showLoading();
-      try {
-        const data = await apiCall('client-portal', {
-          action: 'update-status',
-          projectId: id,
-          status
-        });
-        hideLoading();
-        if (data.ok) {
-          showAlert('Status atualizado!');
-          loadProjects();
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro', 'error');
-      }
-    }
-
-    async function addMessage(id) {
-      const content = prompt('Mensagem:');
-      if (!content) return;
-      
-      showLoading();
-      try {
-        const data = await apiCall('client-portal', {
-          action: 'add-message',
-          projectId: id,
-          message: { from: 'Admin', content }
-        });
-        hideLoading();
-        if (data.ok) showAlert('Mensagem adicionada!');
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro', 'error');
-      }
-    }
-
+    const sections=['createSection','statusSection','messageSection','projectsSection'];
+    function showSection(name){sections.forEach(s=>document.getElementById(s).style.display='none');const map={create:'createSection',status:'statusSection',message:'messageSection',projects:'projectsSection'};if(map[name])document.getElementById(map[name]).style.display='block';document.querySelectorAll('.cp-sb-item').forEach(el=>el.classList.remove('active'))}
+    async function loadProjects(){showLoading();try{const data=await apiCall('client-portal',{action:'list-projects'});hideLoading();if(data.ok&&data.projects){const p=data.projects;document.getElementById('statTotal').textContent=p.length;document.getElementById('statActive').textContent=p.filter(x=>x.status==='active').length;document.getElementById('statPlanning').textContent=p.filter(x=>x.status==='planning').length;document.getElementById('statReview').textContent=p.filter(x=>x.status==='review').length;const planC=p.filter(x=>x.status==='planning');const actC=p.filter(x=>x.status==='active');const revC=p.filter(x=>x.status==='review');document.getElementById('colPlan').textContent=planC.length;document.getElementById('colActive').textContent=actC.length;document.getElementById('colReview').textContent=revC.length;const card=pr=>'<div class="cp-card"><div class="cp-card-title">'+pr.name+'</div><div class="cp-card-meta">'+pr.client+' &middot; ID: '+pr.id+'</div></div>';document.getElementById('planCards').innerHTML=planC.map(card).join('');document.getElementById('activeCards').innerHTML=actC.map(card).join('');document.getElementById('reviewCards').innerHTML=revC.map(card).join('');document.getElementById('projectList').innerHTML=p.map(pr=>'<div class="cp-project"><div><div class="cp-project-name">'+pr.name+'</div><div class="cp-project-client">'+pr.client+' &middot; ID: '+pr.id+'</div></div><span class="cp-badge '+(pr.status||'planning')+'">'+pr.status+'</span></div>').join('')}}catch(err){hideLoading();showAlert('Erro de conexao','error')}}
+    document.getElementById('createForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('client-portal',{action:'create-project',name:document.getElementById('projName').value,client:document.getElementById('projClient').value,description:document.getElementById('projDesc').value});hideLoading();if(data.ok){document.getElementById('createOutput').classList.add('show');document.getElementById('createOutput').style.display='block';document.getElementById('createResult').innerHTML='<strong>&#9989; Projeto criado!</strong> ID: '+(data.project?.id||'--');loadProjects()}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}});
+    document.getElementById('statusForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('client-portal',{action:'update-status',projectId:document.getElementById('statusProjId').value,status:document.getElementById('statusVal').value});hideLoading();if(data.ok){document.getElementById('statusOutput').classList.add('show');document.getElementById('statusOutput').style.display='block';document.getElementById('statusResult').innerHTML='<strong>&#9989; Status atualizado!</strong>';loadProjects()}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}});
+    document.getElementById('messageForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('client-portal',{action:'add-message',projectId:document.getElementById('msgProjId').value,message:{from:document.getElementById('msgFrom').value,content:document.getElementById('msgContent').value}});hideLoading();if(data.ok){document.getElementById('msgOutput').classList.add('show');document.getElementById('msgOutput').style.display='block';document.getElementById('msgResult').innerHTML='<strong>&#9989; Mensagem enviada!</strong>'}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}});
     loadProjects();
   </script>
 </body>

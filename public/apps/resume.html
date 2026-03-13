@@ -1,138 +1,115 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerador de Currículos - AI Powered</title>
+  <title>ResumeAI &#8212; Gerador de Curriculo</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-resume{background:#e8e4dc;color:#1a1a1a;font-family:'Lato',sans-serif}
+    .rv-nav{background:#1a1a1a;color:white;padding:0 24px}
+    .rv-nav-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:48px}
+    .rv-logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:white}
+    .rv-logo-ico{font-size:16px}.rv-logo span{font-weight:700;font-size:16px;letter-spacing:-0.5px}
+    .rv-nav-links a{color:rgba(255,255,255,.5);text-decoration:none;font-size:12px;margin-left:16px;transition:color .2s}
+    .rv-nav-links a:hover{color:white}
+    .rv-page{max-width:850px;margin:0 auto;padding:32px 24px}
+    .rv-paper{background:white;box-shadow:0 2px 20px rgba(0,0,0,.08);padding:48px clamp(24px,6vw,64px);margin-bottom:24px}
+    .rv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:16px}
+    .rv-name{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;line-height:1.1;color:#1a1a1a}
+    .rv-title-role{font-size:14px;color:#888;text-transform:uppercase;letter-spacing:2px;margin-top:4px}
+    .rv-contact{text-align:right;font-size:12px;color:#666;line-height:1.8}
+    .rv-divider{border:none;border-top:2px solid #1a1a1a;margin:20px 0}
+    .rv-divider-thin{border:none;border-top:1px solid #e0dcd4;margin:16px 0}
+    .rv-section{margin-bottom:24px}
+    .rv-section-head{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:#1a1a1a;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .rv-section-head::after{content:'';flex:1;height:1px;background:#d0ccc4}
+    .rv-summary{font-size:14px;color:#555;line-height:1.8;font-style:italic}
+    .rv-two-col{display:grid;grid-template-columns:1fr 300px;gap:40px}
+    @media(max-width:700px){.rv-two-col{grid-template-columns:1fr}}
+    .rv-skill-bar{margin-bottom:8px}
+    .rv-skill-name{font-size:12px;font-weight:700;margin-bottom:2px;display:flex;justify-content:space-between}
+    .rv-skill-track{height:4px;background:#e8e4dc;border-radius:2px;overflow:hidden}
+    .rv-skill-fill{height:100%;background:#1a1a1a;border-radius:2px}
+    .rv-info-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:4px;margin-top:12px}
+    .rv-info-val{font-size:13px;color:#1a1a1a;line-height:1.6}
+    .rv-form-paper{background:white;box-shadow:0 2px 20px rgba(0,0,0,.08);padding:40px clamp(24px,6vw,64px)}
+    .rv-form-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;margin-bottom:4px}
+    .rv-form-sub{color:#888;font-size:13px;margin-bottom:24px}
+    .rv-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:600px){.rv-form-grid{grid-template-columns:1fr}}
+    .rv-field label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:4px}
+    .rv-field textarea{width:100%;padding:12px;border:1px solid #e0dcd4;font-family:inherit;font-size:13px;resize:vertical;min-height:100px;color:#1a1a1a;transition:border-color .2s;background:white}
+    .rv-field textarea:focus{outline:none;border-color:#1a1a1a}
+    .rv-field.full{grid-column:1/-1}
+    .rv-submit{width:100%;padding:14px;margin-top:16px;background:#1a1a1a;color:white;border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+    .rv-submit:hover{background:#333}
+    .rv-output{display:none;margin-top:24px}
+    .rv-output.show{display:block}
+    .rv-output-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .rv-output-head h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700}
+    .rv-out-btns{display:flex;gap:8px}
+    .rv-out-btn{padding:6px 14px;border:1px solid #e0dcd4;background:white;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s;color:#666}
+    .rv-out-btn:hover{border-color:#1a1a1a;color:#1a1a1a}
+    .rv-result{background:#faf9f7;border:1px solid #e0dcd4;padding:24px;font-size:14px;line-height:1.8;color:#333}
+    .rv-result h2{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;margin:16px 0 8px;border-bottom:1px solid #e0dcd4;padding-bottom:6px}
+    .rv-result h3{font-size:14px;font-weight:700;margin:10px 0 4px}
+    .rv-result strong{color:#1a1a1a}
+    .rv-footer{text-align:center;padding:24px 0;font-size:12px;color:#aaa}
+    .rv-footer a{color:#888;text-decoration:none}
+  </style>
 </head>
 <body class="app-page app-resume">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">📄</span>
-        <h1>Gerador de Currículos</h1>
-      </div>
-      <p class="app-subtitle">Crie currículos profissionais otimizados para ATS em segundos</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <h2>Informações Profissionais</h2>
-        <form id="resumeForm">
-          <div class="form-group">
-            <label for="experience">Experiência Profissional</label>
-            <textarea 
-              id="experience" 
-              rows="6" 
-              placeholder="Ex: Senior Full Stack Developer com 5 anos de experiência em Node.js, React, microservices e cloud AWS. Liderou equipe de 4 desenvolvedores no projeto XYZ..."
-            ></textarea>
-          </div>
-          
-          <div class="form-group">
-            <label for="skills">Skills-chave (separadas por vírgula)</label>
-            <input 
-              type="text" 
-              id="skills" 
-              placeholder="JavaScript, React, Node.js, AWS, Docker, MongoDB"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="education">Formação</label>
-            <input 
-              type="text" 
-              id="education" 
-              placeholder="Ex: Bacharelado em Ciência da Computação - USP (2018)"
-            />
-          </div>
-
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">✨</span>
-            Gerar Currículo com IA
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section" id="outputSection" class="hidden">
-        <div class="output-header">
-          <h2>Seu Currículo</h2>
-          <div class="output-actions">
-            <button onclick="copyToClipboard()" class="btn-secondary">📋 Copiar</button>
-            <button onclick="downloadPDF()" class="btn-secondary">⬇️ Download</button>
-          </div>
+  <nav class="rv-nav"><div class="rv-nav-inner"><a href="/" class="rv-logo"><span class="rv-logo-ico">&#128196;</span><span>ResumeAI</span></a><div class="rv-nav-links"><a href="/">&#8592; Voltar</a><a href="#build">Criar</a></div></div></nav>
+  <div class="rv-page">
+    <div class="rv-paper">
+      <div class="rv-header"><div><h1 class="rv-name">Seu Nome Aqui</h1><div class="rv-title-role">Full Stack Developer</div></div><div class="rv-contact">email@exemplo.com<br>+55 11 99999-9999<br>Sao Paulo, SP<br>linkedin.com/in/seu-perfil</div></div>
+      <hr class="rv-divider">
+      <div class="rv-section"><h2 class="rv-section-head">Resumo</h2><p class="rv-summary">Profissional com experiencia em desenvolvimento de software, lideranca tecnica e entrega de produtos. Gere seu curriculo profissional com IA e destaque-se no mercado.</p></div>
+      <div class="rv-two-col">
+        <div>
+          <div class="rv-section"><h2 class="rv-section-head">Experiencia</h2><p style="font-size:13px;color:#555;line-height:1.7">A IA cria secoes de experiencia com conquistas quantificaveis, lisadas de forma clara e profissional.</p></div>
+          <div class="rv-section"><h2 class="rv-section-head">Educacao</h2><p style="font-size:13px;color:#555;line-height:1.7">Formacao academica formatada com instituicao, grau e periodo.</p></div>
         </div>
-        <div id="output" class="output-content"></div>
+        <div>
+          <div class="rv-section"><h2 class="rv-section-head">Skills</h2>
+            <div class="rv-skill-bar"><div class="rv-skill-name"><span>JavaScript</span><span>90%</span></div><div class="rv-skill-track"><div class="rv-skill-fill" style="width:90%"></div></div></div>
+            <div class="rv-skill-bar"><div class="rv-skill-name"><span>React / Node.js</span><span>85%</span></div><div class="rv-skill-track"><div class="rv-skill-fill" style="width:85%"></div></div></div>
+            <div class="rv-skill-bar"><div class="rv-skill-name"><span>Python</span><span>75%</span></div><div class="rv-skill-track"><div class="rv-skill-fill" style="width:75%"></div></div></div>
+            <div class="rv-skill-bar"><div class="rv-skill-name"><span>SQL / Databases</span><span>80%</span></div><div class="rv-skill-track"><div class="rv-skill-fill" style="width:80%"></div></div></div>
+          </div>
+          <div class="rv-info-label">Idiomas</div><div class="rv-info-val">Portugues (Nativo), Ingles (Fluente)</div>
+          <div class="rv-info-label">Interesses</div><div class="rv-info-val">Open Source, IA, Startups</div>
+        </div>
       </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Gerando seu currículo profissional...</p>
     </div>
+    <div class="rv-form-paper" id="build">
+      <h2 class="rv-form-title">&#9998; Crie seu Curriculo</h2>
+      <p class="rv-form-sub">Preencha com suas informacoes e a IA formata um curriculo profissional</p>
+      <form id="appForm">
+        <div class="rv-form-grid">
+          <div class="rv-field full"><label>Experiencia Profissional</label><textarea id="experience" rows="4" required placeholder="Ex: 3 anos como dev frontend na Empresa X, liderando time de 5 devs..."></textarea></div>
+          <div class="rv-field"><label>Habilidades</label><textarea id="skills" rows="3" required placeholder="JavaScript, React, Node.js, Python, SQL..."></textarea></div>
+          <div class="rv-field"><label>Educacao</label><textarea id="education" rows="3" required placeholder="Ciencia da Computacao - USP (2018-2022)"></textarea></div>
+        </div>
+        <button type="submit" class="rv-submit">&#128196; Gerar Curriculo Profissional</button>
+      </form>
+      <div class="rv-output" id="outputSection">
+        <div class="rv-output-head"><h3>&#128196; Curriculo Gerado</h3><div class="rv-out-btns"><button onclick="copyOutput()" class="rv-out-btn">&#128203; Copiar</button><button onclick="downloadPDF()" class="rv-out-btn">&#128196; PDF</button></div></div>
+        <div class="rv-result" id="output"></div>
+      </div>
+    </div>
+    <div class="rv-footer"><a href="/">&#8592; Voltar ao Portfolio</a> &middot; ResumeAI &#128196;</div>
   </div>
-
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Gerando curriculo...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('resumeForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const experience = document.getElementById('experience').value;
-      const skills = document.getElementById('skills').value;
-      const education = document.getElementById('education').value;
-      
-      const input = `${experience}\n\nSkills: ${skills}\n\nEducação: ${education}`;
-      
-      showLoading();
-      
-      try {
-        const response = await fetch('http://localhost:8790/apps/resume/run', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ input })
-        });
-        
-        const data = await response.json();
-        hideLoading();
-        
-        if (data.ok) {
-          showOutput(data.output);
-        } else {
-          alert('Erro: ' + (data.error || 'Erro desconhecido'));
-        }
-      } catch (error) {
-        hideLoading();
-        alert('Erro de conexão: ' + error.message);
-      }
-    });
-
-    function showOutput(content) {
-      document.getElementById('outputSection').classList.remove('hidden');
-      document.getElementById('output').innerHTML = formatMarkdown(content);
-      document.getElementById('output').dataset.raw = content;
-    }
-
-    function formatMarkdown(text) {
-      return text
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/\n/g, '<br>');
-    }
-
-    function copyToClipboard() {
-      const text = document.getElementById('output').dataset.raw;
-      navigator.clipboard.writeText(text).then(() => {
-        alert('Copiado para área de transferência!');
-      });
-    }
-
-    function downloadPDF() {
-      alert('Funcionalidade de download será implementada em breve!');
-    }
+    function formatMarkdown(t){return t.replace(/## (.*)/g,'<h2>$1</h2>').replace(/### (.*)/g,'<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}
+    document.getElementById('appForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('resume',{input:JSON.stringify({experience:document.getElementById('experience').value,skills:document.getElementById('skills').value,education:document.getElementById('education').value})});hideLoading();if(data.ok){const os=document.getElementById('outputSection');os.classList.add('show');os.style.display='block';document.getElementById('output').innerHTML=formatMarkdown(data.output);document.getElementById('output').dataset.raw=data.output}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro de conexao','error')}});
+    function copyOutput(){navigator.clipboard.writeText(document.getElementById('output').dataset.raw).then(()=>showAlert('Copiado!'))}
+    function downloadPDF(){showAlert('PDF export em breve!')}
   </script>
 </body>
 </html>

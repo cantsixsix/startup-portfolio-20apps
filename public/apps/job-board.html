@@ -1,174 +1,89 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Job Board - Vagas e Candidaturas</title>
+  <title>HireWave &#8212; AI Job Board</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-job-board{background:#fafafa;color:#111827;font-family:'Plus Jakarta Sans',sans-serif}
+    .jb-nav{background:white;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:100;padding:0 24px}
+    .jb-nav-inner{max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .jb-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#111827}
+    .jb-logo-ico{width:32px;height:32px;background:linear-gradient(135deg,#10b981,#059669);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;color:white}
+    .jb-logo span{font-weight:800;font-size:18px}
+    .jb-nav-links{display:flex;align-items:center;gap:8px}
+    .jb-nav-links a{color:#6b7280;text-decoration:none;font-size:13px;font-weight:500;padding:6px 12px;border-radius:8px;transition:all .15s}
+    .jb-nav-links a:hover{background:#f3f4f6;color:#111827}
+    .jb-nav-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer;transition:all .15s;border:none;background:#10b981;color:white}
+    .jb-nav-btn:hover{background:#059669}
+    .jb-hero{background:linear-gradient(135deg,#ecfdf5,#d1fae5);padding:48px 24px;text-align:center;border-bottom:1px solid #a7f3d0}
+    .jb-hero h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:#065f46;margin-bottom:8px;letter-spacing:-0.5px}
+    .jb-hero p{color:#047857;font-size:15px;max-width:480px;margin:0 auto 20px;line-height:1.6}
+    .jb-search{display:flex;gap:8px;max-width:560px;margin:0 auto}
+    @media(max-width:500px){.jb-search{flex-direction:column}}
+    .jb-search input{flex:1;padding:12px 16px;border:2px solid #a7f3d0;border-radius:10px;font-family:inherit;font-size:14px;color:#111827;background:white;transition:border-color .2s}
+    .jb-search input:focus{outline:none;border-color:#10b981}
+    .jb-search-btn{padding:12px 24px;background:#10b981;color:white;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+    .jb-content{max-width:1040px;margin:0 auto;padding:32px 24px}
+    .jb-tabs{display:flex;gap:4px;margin-bottom:24px;background:#f3f4f6;border-radius:10px;padding:4px;width:fit-content}
+    .jb-tab{padding:8px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;border:none;background:transparent;color:#6b7280;font-family:inherit}
+    .jb-tab.active{background:white;color:#111827;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+    .jb-section{display:none}.jb-section.active{display:block}
+    .jb-jobs-grid{display:grid;gap:12px}
+    .jb-job-card{background:white;border:1px solid #e5e7eb;border-radius:12px;padding:20px 24px;display:flex;align-items:flex-start;gap:16px;transition:all .15s;cursor:default}
+    .jb-job-card:hover{border-color:#10b981;box-shadow:0 4px 12px rgba(16,185,129,.08)}
+    .jb-job-logo{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+    .jb-job-logo.green{background:#ecfdf5}.jb-job-logo.blue{background:#eff6ff}.jb-job-logo.purple{background:#f5f3ff}.jb-job-logo.orange{background:#fff7ed}
+    .jb-job-info{flex:1}
+    .jb-job-title{font-size:15px;font-weight:700;color:#111827;margin-bottom:2px}
+    .jb-job-company{font-size:13px;color:#6b7280;margin-bottom:8px}
+    .jb-job-tags{display:flex;gap:6px;flex-wrap:wrap}
+    .jb-tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;background:#f3f4f6;color:#374151}
+    .jb-tag.remote{background:#ecfdf5;color:#065f46}.jb-tag.fulltime{background:#eff6ff;color:#1e40af}.jb-tag.salary{background:#fef3c7;color:#92400e}
+    .jb-job-apply{flex-shrink:0;align-self:center}
+    .jb-apply-btn{padding:8px 20px;border-radius:8px;background:#10b981;color:white;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+    .jb-apply-btn:hover{background:#059669}
+    .jb-form-card{background:white;border:1px solid #e5e7eb;border-radius:12px;padding:28px}
+    .jb-form-card h2{font-size:18px;font-weight:700;margin-bottom:4px}
+    .jb-form-sub{font-size:13px;color:#6b7280;margin-bottom:20px}
+    .jb-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:600px){.jb-form-grid{grid-template-columns:1fr}}
+    .jb-field label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px}
+    .jb-field input,.jb-field textarea,.jb-field select{width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;font-family:inherit;font-size:13px;color:#111827;transition:border-color .2s;background:white}
+    .jb-field input:focus,.jb-field textarea:focus,.jb-field select:focus{outline:none;border-color:#10b981}
+    .jb-field textarea{resize:vertical;min-height:80px}
+    .jb-field.full{grid-column:1/-1}
+    .jb-submit{width:100%;padding:12px;margin-top:12px;background:#10b981;color:white;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+    .jb-submit:hover{background:#059669}
+    .jb-output{display:none;margin-top:16px}
+    .jb-output.show{display:block}
+    .jb-result{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:16px;font-size:13px;line-height:1.7}
+    .jb-foot{text-align:center;padding:40px 24px;font-size:12px;color:#9ca3af;border-top:1px solid #e5e7eb;margin-top:32px}
+    .jb-foot a{color:#10b981;text-decoration:none}
+  </style>
 </head>
 <body class="app-page app-job-board">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">💼</span>
-        <h1>Job Board</h1>
-      </div>
-      <p class="app-subtitle">Publique vagas e receba candidaturas</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <h2>Publicar Vaga</h2>
-        <form id="jobForm">
-          <div class="form-group">
-            <label for="title">Título da Vaga *</label>
-            <input type="text" id="title" required placeholder="Ex: Senior Full Stack Developer">
-          </div>
-          
-          <div class="form-group">
-            <label for="company">Empresa *</label>
-            <input type="text" id="company" required placeholder="Nome da empresa">
-          </div>
-
-          <div class="grid-2">
-            <div class="form-group">
-              <label for="location">Localização</label>
-              <input type="text" id="location" placeholder="Ex: Remote, São Paulo">
-            </div>
-
-            <div class="form-group">
-              <label for="type">Tipo</label>
-              <select id="type">
-                <option>Full-time</option>
-                <option>Part-time</option>
-                <option>Freelance</option>
-                <option>Contract</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="salary">Faixa Salarial</label>
-            <input type="text" id="salary" placeholder="Ex: R$ 8k - 12k">
-          </div>
-
-          <div class="form-group">
-            <label for="description">Descrição</label>
-            <textarea id="description" rows="4" placeholder="Requisitos, responsabilidades..."></textarea>
-          </div>
-
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">📤</span>
-            Publicar Vaga
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section">
-        <div class="output-header">
-          <h2>Vagas Ativas</h2>
-          <button onclick="loadJobs()" class="btn-secondary">🔄 Atualizar</button>
-        </div>
-        <div id="jobsList"></div>
-      </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Processando...</p>
-    </div>
+  <nav class="jb-nav"><div class="jb-nav-inner"><a href="/" class="jb-logo"><div class="jb-logo-ico">&#128188;</div><span>HireWave</span></a><div class="jb-nav-links"><a href="/">&#8592; Voltar</a><button class="jb-nav-btn" onclick="switchTab('post')">&#10133; Publicar Vaga</button></div></div></nav>
+  <div class="jb-hero"><h1>Encontre talentos incriveis &#127775;</h1><p>Job board inteligente com IA para postar vagas, encontrar candidatos e gerenciar aplicacoes.</p><div class="jb-search"><input type="text" placeholder="&#128269; Buscar vagas..." id="searchInput"><button class="jb-search-btn" onclick="loadJobs()">Buscar</button></div></div>
+  <div class="jb-content">
+    <div class="jb-tabs"><button class="jb-tab active" onclick="switchTab('browse')">&#128188; Vagas</button><button class="jb-tab" onclick="switchTab('post')">&#10133; Publicar</button><button class="jb-tab" onclick="switchTab('apply')">&#128232; Candidatar</button></div>
+    <div class="jb-section active" id="browseSection"><div class="jb-jobs-grid" id="jobsList"><div class="jb-job-card"><div class="jb-job-logo green">&#128187;</div><div class="jb-job-info"><div class="jb-job-title">Carregando vagas...</div><div class="jb-job-company">Atualizando lista</div></div></div></div></div>
+    <div class="jb-section" id="postSection"><div class="jb-form-card"><h2>&#10133; Publicar Nova Vaga</h2><p class="jb-form-sub">Preencha os detalhes da vaga para publicar</p><form id="postForm"><div class="jb-form-grid"><div class="jb-field"><label>Titulo da Vaga</label><input type="text" id="postTitle" required placeholder="Ex: Frontend Developer"></div><div class="jb-field"><label>Empresa</label><input type="text" id="postCompany" required placeholder="Ex: Tech Corp"></div><div class="jb-field"><label>Localizacao</label><input type="text" id="postLocation" required placeholder="Ex: Remoto / Sao Paulo"></div><div class="jb-field"><label>Tipo</label><select id="postType"><option value="full-time">Full-time</option><option value="part-time">Part-time</option><option value="contract">Contrato</option><option value="freelance">Freelance</option></select></div><div class="jb-field"><label>Salario</label><input type="text" id="postSalary" placeholder="Ex: R$8.000 - R$12.000"></div><div class="jb-field full"><label>Descricao</label><textarea id="postDesc" rows="4" required placeholder="Descreva a vaga, requisitos e beneficios..."></textarea></div></div><button type="submit" class="jb-submit">&#128640; Publicar Vaga</button></form><div class="jb-output" id="postOutput"><div class="jb-result" id="postResult"></div></div></div></div>
+    <div class="jb-section" id="applySection"><div class="jb-form-card"><h2>&#128232; Candidatar-se</h2><p class="jb-form-sub">Envie sua candidatura para uma vaga</p><form id="applyForm"><div class="jb-form-grid"><div class="jb-field"><label>ID da Vaga</label><input type="text" id="applyJobId" required placeholder="ID da vaga"></div><div class="jb-field"><label>Seu Nome</label><input type="text" id="applyName" required placeholder="Seu nome completo"></div><div class="jb-field"><label>Email</label><input type="email" id="applyEmail" required placeholder="seu@email.com"></div><div class="jb-field full"><label>Carta de Apresentacao</label><textarea id="applyCover" rows="4" required placeholder="Por que voce e ideal para esta vaga?"></textarea></div></div><button type="submit" class="jb-submit">&#128232; Enviar Candidatura</button></form><div class="jb-output" id="applyOutput"><div class="jb-result" id="applyResult"></div></div></div></div>
+    <footer class="jb-foot"><a href="/">&#8592; Voltar ao Portfolio</a> &middot; HireWave &#128188;</footer>
   </div>
-
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Carregando...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('jobForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const data = await apiCall('job-board', {
-          action: 'post',
-          job: {
-            title: document.getElementById('title').value,
-            company: document.getElementById('company').value,
-            location: document.getElementById('location').value,
-            type: document.getElementById('type').value,
-            salary: document.getElementById('salary').value,
-            description: document.getElementById('description').value
-          }
-        });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          showAlert('Vaga publicada com sucesso!');
-          document.getElementById('jobForm').reset();
-          loadJobs();
-        } else {
-          showAlert(data.error || 'Erro ao publicar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    async function loadJobs() {
-      showLoading();
-      try {
-        const data = await apiCall('job-board', { action: 'list' });
-        hideLoading();
-        
-        if (data.ok && data.jobs.length > 0) {
-          document.getElementById('jobsList').innerHTML = data.jobs.map(job => `
-            <div class="list-item">
-              <h4>${job.title}</h4>
-              <p><strong>${job.company}</strong> • ${job.location} • ${job.type}</p>
-              ${job.salary ? `<p><span class="badge badge-success">💰 ${job.salary}</span></p>` : ''}
-              ${job.description ? `<p class="mt-12 muted">${job.description}</p>` : ''}
-              <button onclick="applyJob('${job.id}')" class="btn-secondary mt-12">Candidatar-se</button>
-            </div>
-          `).join('');
-        } else {
-          document.getElementById('jobsList').innerHTML = `
-            <div class="empty-state">
-              <div class="empty-state-icon">💼</div>
-              <p>Nenhuma vaga publicada ainda</p>
-            </div>
-          `;
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro ao carregar vagas', 'error');
-      }
-    }
-
-    async function applyJob(jobId) {
-      const name = prompt('Seu nome:');
-      const email = prompt('Seu e-mail:');
-      if (!name || !email) return;
-
-      showLoading();
-      try {
-        const data = await apiCall('job-board', {
-          action: 'apply',
-          jobId,
-          application: { name, email, coverLetter: 'Candidate via Job Board' }
-        });
-        hideLoading();
-        
-        if (data.ok) {
-          showAlert('Candidatura enviada!');
-        } else {
-          showAlert('Erro ao candidatar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    }
-
+    function switchTab(name){document.querySelectorAll('.jb-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.jb-tab').forEach(t=>t.classList.remove('active'));const map={browse:'browseSection',post:'postSection',apply:'applySection'};document.getElementById(map[name]).classList.add('active');event.target.classList.add('active')}
+    const logos=['&#128187;','&#127919;','&#128640;','&#128202;'];const colors=['green','blue','purple','orange'];
+    async function loadJobs(){showLoading();try{const data=await apiCall('job-board',{action:'list'});hideLoading();if(data.ok&&data.jobs){document.getElementById('jobsList').innerHTML=data.jobs.length?data.jobs.map((j,i)=>'<div class="jb-job-card"><div class="jb-job-logo '+colors[i%4]+'">'+logos[i%4]+'</div><div class="jb-job-info"><div class="jb-job-title">'+j.title+'</div><div class="jb-job-company">'+j.company+' &middot; '+(j.location||'Remoto')+'</div><div class="jb-job-tags"><span class="jb-tag fulltime">'+(j.type||'full-time')+'</span>'+(j.salary?'<span class="jb-tag salary">'+j.salary+'</span>':'')+'<span class="jb-tag">ID: '+j.id+'</span></div></div><div class="jb-job-apply"><button class="jb-apply-btn" onclick="prefillApply(\''+j.id+'\')">Candidatar</button></div></div>').join(''):'<div class="jb-job-card"><div class="jb-job-info"><div class="jb-job-title">Nenhuma vaga ainda</div><div class="jb-job-company">Publique a primeira!</div></div></div>'}}catch(err){hideLoading();showAlert('Erro de conexao','error')}}
+    function prefillApply(id){document.getElementById('applyJobId').value=id;switchTab('apply');document.querySelectorAll('.jb-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.jb-tab')[2].classList.add('active')}
+    document.getElementById('postForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('job-board',{action:'post',title:document.getElementById('postTitle').value,company:document.getElementById('postCompany').value,location:document.getElementById('postLocation').value,type:document.getElementById('postType').value,salary:document.getElementById('postSalary').value,description:document.getElementById('postDesc').value});hideLoading();if(data.ok){document.getElementById('postOutput').classList.add('show');document.getElementById('postOutput').style.display='block';document.getElementById('postResult').innerHTML='<strong>&#9989; Vaga publicada!</strong> ID: '+(data.job?.id||'--');loadJobs()}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}});
+    document.getElementById('applyForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('job-board',{action:'apply',jobId:document.getElementById('applyJobId').value,application:{name:document.getElementById('applyName').value,email:document.getElementById('applyEmail').value,coverLetter:document.getElementById('applyCover').value}});hideLoading();if(data.ok){document.getElementById('applyOutput').classList.add('show');document.getElementById('applyOutput').style.display='block';document.getElementById('applyResult').innerHTML='<strong>&#9989; Candidatura enviada!</strong>'}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}});
     loadJobs();
   </script>
 </body>

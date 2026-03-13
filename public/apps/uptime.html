@@ -1,219 +1,97 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Uptime Monitor - 24/7 Monitoring</title>
+  <title>UptimeGuard &#8212; Uptime Monitor</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-uptime{background:#0d1117;color:#c9d1d9;font-family:'Inter',sans-serif}
+    .up-nav{background:#161b22;border-bottom:1px solid #30363d;position:sticky;top:0;z-index:100;padding:0 24px}
+    .up-nav-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px}
+    .up-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#c9d1d9}
+    .up-logo-ico{font-size:20px}.up-logo span{font-weight:700;font-size:17px}
+    .up-nav-links a{color:#8b949e;text-decoration:none;font-size:13px;margin-left:16px;transition:color .15s}
+    .up-nav-links a:hover{color:#c9d1d9}
+    .up-status-banner{text-align:center;padding:32px 24px;border-bottom:1px solid #30363d}
+    .up-status-dot{width:16px;height:16px;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:middle}
+    .up-status-dot.green{background:#3fb950;box-shadow:0 0 12px rgba(63,185,80,.4)}
+    .up-status-dot.red{background:#f85149;box-shadow:0 0 12px rgba(248,81,73,.4)}
+    .up-status-text{font-size:20px;font-weight:700;color:#c9d1d9}
+    .up-status-time{font-size:12px;color:#8b949e;margin-top:4px}
+    .up-content{max-width:960px;margin:0 auto;padding:24px}
+    .up-section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .up-section-head h2{font-size:16px;font-weight:700;color:#c9d1d9}
+    .up-hint{font-size:12px;color:#8b949e}
+    .up-monitors{display:flex;flex-direction:column;gap:8px;margin-bottom:32px}
+    .up-monitor{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;transition:all .15s}
+    .up-monitor:hover{border-color:#484f58}
+    .up-monitor-left{display:flex;align-items:center;gap:12px}
+    .up-monitor-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .up-monitor-dot.up{background:#3fb950}.up-monitor-dot.down{background:#f85149}.up-monitor-dot.unknown{background:#8b949e}
+    .up-monitor-info h3{font-size:14px;font-weight:600;color:#c9d1d9;margin-bottom:2px}
+    .up-monitor-info span{font-size:12px;color:#8b949e}
+    .up-monitor-right{display:flex;align-items:center;gap:8px}
+    .up-bar{width:4px;height:24px;border-radius:2px;background:#3fb950}
+    .up-bar.down{background:#f85149}.up-bar.partial{background:#d29922}
+    .up-monitor-actions{display:flex;gap:4px;margin-left:12px}
+    .up-mon-btn{padding:4px 10px;border-radius:6px;font-size:11px;border:1px solid #30363d;background:transparent;color:#8b949e;cursor:pointer;font-family:inherit;transition:all .15s}
+    .up-mon-btn:hover{border-color:#58a6ff;color:#58a6ff}
+    .up-form-section{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:24px;margin-bottom:16px}
+    .up-form-section h2{font-size:16px;font-weight:700;margin-bottom:4px}
+    .up-form-sub{font-size:12px;color:#8b949e;margin-bottom:16px}
+    .up-tabs{display:flex;gap:0;border-bottom:1px solid #30363d;margin-bottom:24px}
+    .up-tab{padding:8px 16px;font-size:13px;font-weight:500;color:#8b949e;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+    .up-tab.active{color:#c9d1d9;border-bottom-color:#58a6ff}
+    .up-section{display:none}.up-section.active{display:block}
+    .up-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:500px){.up-form-grid{grid-template-columns:1fr}}
+    .up-field label{display:block;font-size:12px;font-weight:500;color:#8b949e;margin-bottom:4px}
+    .up-field input{width:100%;padding:10px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-family:inherit;font-size:13px;transition:border-color .15s}
+    .up-field input:focus{outline:none;border-color:#58a6ff}
+    .up-field.full{grid-column:1/-1}
+    .up-submit{width:100%;padding:12px;margin-top:12px;background:#238636;color:white;border:none;border-radius:6px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+    .up-submit:hover{background:#2ea043}
+    .up-output{display:none;margin-top:16px}
+    .up-output.show{display:block}
+    .up-result{background:#0d1117;border:1px solid #30363d;border-radius:6px;padding:16px;font-size:13px;line-height:1.7;color:#c9d1d9}
+    .up-result.success{border-color:#238636}
+    .up-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600}
+    .up-badge.up{background:rgba(63,185,80,.15);color:#3fb950}
+    .up-badge.down{background:rgba(248,81,73,.15);color:#f85149}
+    .up-foot{text-align:center;padding:32px 24px;font-size:12px;color:#484f58;border-top:1px solid #30363d;margin-top:24px}
+    .up-foot a{color:#58a6ff;text-decoration:none}
+  </style>
 </head>
 <body class="app-page app-uptime">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">🔍</span>
-        <h1>Uptime Monitor</h1>
-      </div>
-      <p class="app-subtitle">Monitore a disponibilidade de seus serviços 24/7</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <h2>Adicionar Monitor</h2>
-        <form id="monitorForm">
-          <div class="form-group">
-            <label for="name">Nome do Serviço *</label>
-            <input type="text" id="name" required placeholder="Ex: API Production">
-          </div>
-          
-          <div class="form-group">
-            <label for="url">URL *</label>
-            <input type="url" id="url" required placeholder="https://api.exemplo.com/health">
-          </div>
-
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">➕</span>
-            Adicionar Monitor
-          </button>
-        </form>
-
-        <hr class="divider">
-
-        <h2>Status Page</h2>
-        <button onclick="viewStatusPage()" class="btn-secondary full-width">
-          📊 Ver Status Page
-        </button>
-      </div>
-
-      <div class="output-section">
-        <div class="output-header">
-          <h2>Monitores Ativos</h2>
-          <button onclick="loadMonitors()" class="btn-secondary">🔄 Atualizar</button>
-        </div>
-        <div id="monitorsList"></div>
-      </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Processando...</p>
+  <nav class="up-nav"><div class="up-nav-inner"><a href="/" class="up-logo"><span class="up-logo-ico">&#128994;</span><span>UptimeGuard</span></a><div class="up-nav-links"><a href="/">&#8592; Voltar</a><a href="#manage">Gerenciar</a></div></div></nav>
+  <div class="up-status-banner"><span class="up-status-dot green"></span><span class="up-status-text">Todos os Sistemas Operacionais</span><div class="up-status-time">Ultima verificacao: agora</div></div>
+  <div class="up-content">
+    <div class="up-section-head"><h2>&#128202; Monitores</h2><span class="up-hint">Barras verdes = online</span></div>
+    <div class="up-monitors" id="monitorList"><div class="up-monitor"><div class="up-monitor-left"><div class="up-monitor-dot unknown"></div><div class="up-monitor-info"><h3>Carregando...</h3><span>--</span></div></div></div></div>
+    <div id="manage">
+    <div class="up-tabs"><button class="up-tab active" onclick="switchTab('add')">&#10133; Adicionar</button><button class="up-tab" onclick="switchTab('check')">&#128269; Verificar</button><button class="up-tab" onclick="switchTab('diagnose')">&#128736; Diagnosticar</button><button class="up-tab" onclick="switchTab('status')">&#127760; Status Page</button></div>
+    <div class="up-section active" id="addSection"><div class="up-form-section"><h2>&#10133; Adicionar Monitor</h2><p class="up-form-sub">Monitore a disponibilidade de um site ou API</p><form id="addForm"><div class="up-form-grid"><div class="up-field"><label>Nome</label><input type="text" id="monName" required placeholder="Ex: API Principal"></div><div class="up-field"><label>URL</label><input type="url" id="monUrl" required placeholder="https://exemplo.com"></div></div><button type="submit" class="up-submit">&#10133; Adicionar Monitor</button></form><div class="up-output" id="addOutput"><div class="up-result" id="addResult"></div></div></div></div>
+    <div class="up-section" id="checkSection"><div class="up-form-section"><h2>&#128269; Verificar Monitor</h2><p class="up-form-sub">Faca uma verificacao imediata de um monitor</p><div class="up-field"><label>ID do Monitor</label><input type="text" id="checkId" placeholder="ID"><button onclick="checkMonitor()" class="up-submit" style="margin-top:8px">&#128269; Verificar Agora</button></div><div class="up-output" id="checkOutput"><div class="up-result" id="checkResult"></div></div></div></div>
+    <div class="up-section" id="diagnoseSection"><div class="up-form-section"><h2>&#128736; Diagnosticar</h2><p class="up-form-sub">Analise detalhada de um monitor</p><div class="up-field"><label>ID do Monitor</label><input type="text" id="diagnoseId" placeholder="ID"><button onclick="diagnoseMonitor()" class="up-submit" style="margin-top:8px;background:#58a6ff">&#128736; Diagnosticar</button></div><div class="up-output" id="diagnoseOutput"><div class="up-result" id="diagnoseResult"></div></div></div></div>
+    <div class="up-section" id="statusSection"><div class="up-form-section"><h2>&#127760; Status Page Publica</h2><p class="up-form-sub">Gera uma pagina de status publica com todos os monitores</p><button onclick="generateStatusPage()" class="up-submit" style="background:#58a6ff">&#127760; Gerar Status Page</button></div></div>
     </div>
+    <footer class="up-foot"><a href="/">&#8592; Voltar ao Portfolio</a> &middot; UptimeGuard &#128994;</footer>
   </div>
-
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Carregando...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('monitorForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const data = await apiCall('uptime', {
-          action: 'add-monitor',
-          monitor: {
-            name: document.getElementById('name').value,
-            url: document.getElementById('url').value
-          }
-        });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          showAlert('Monitor adicionado!');
-          document.getElementById('monitorForm').reset();
-          loadMonitors();
-        } else {
-          showAlert(data.error || 'Erro ao adicionar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    async function loadMonitors() {
-      showLoading();
-      try {
-        const data = await apiCall('uptime', { action: 'list-monitors' });
-        hideLoading();
-        
-        if (data.ok && data.monitors.length > 0) {
-          document.getElementById('monitorsList').innerHTML = data.monitors.map(m => {
-            const statusColor = m.status === 'up' ? '#22c55e' : m.status === 'down' ? '#ef4444' : '#94a3b8';
-            const statusIcon = m.status === 'up' ? '✅' : m.status === 'down' ? '❌' : '⏳';
-            
-            return `
-              <div class="list-item" style="border-left-color: ${statusColor};">
-                <div class="row-between mb-12">
-                  <h4>${statusIcon} ${m.name}</h4>
-                  <span class="badge badge-${m.status === 'up' ? 'success' : 'error'}">${m.status?.toUpperCase() || 'UNKNOWN'}</span>
-                </div>
-                <p class="muted" style="word-break: break-all;">${m.url}</p>
-                <p><strong>Checks:</strong> ${m.checks?.length || 0} | <strong>Incidents:</strong> ${m.incidents?.length || 0}</p>
-                <div class="row-actions">
-                  <button onclick="checkMonitor('${m.id}')" class="btn-secondary">🔄 Checar Agora</button>
-                  <button onclick="diagnoseMonitor('${m.id}')" class="btn-secondary">🤖 Diagnóstico IA</button>
-                </div>
-              </div>
-            `;
-          }).join('');
-        } else {
-          document.getElementById('monitorsList').innerHTML = `
-            <div class="empty-state">
-              <div class="empty-state-icon">🔍</div>
-              <p>Nenhum monitor configurado</p>
-            </div>
-          `;
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro ao carregar monitores', 'error');
-      }
-    }
-
-    async function checkMonitor(id) {
-      showLoading();
-      try {
-        const data = await apiCall('uptime', { action: 'check', monitorId: id });
-        hideLoading();
-        
-        if (data.ok) {
-          const statusText = data.currentStatus === 'up' ? '✅ Site está UP' : '❌ Site está DOWN';
-          const statusType = data.currentStatus === 'up' ? 'success' : 'error';
-          showAlert(`${statusText} (${data.check.responseTime}ms)`, statusType);
-          loadMonitors();
-        } else {
-          showAlert('Erro ao checar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    }
-
-    async function diagnoseMonitor(id) {
-      showLoading();
-      try {
-        const data = await apiCall('uptime', { action: 'diagnose', monitorId: id });
-        hideLoading();
-        
-        if (data.ok) {
-          alert(`🤖 Diagnóstico IA:\n\n${data.diagnosis}`);
-        } else {
-          showAlert('Erro ao diagnosticar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    }
-
-    async function viewStatusPage() {
-      showLoading();
-      try {
-        const data = await apiCall('uptime', { action: 'status-page' });
-        hideLoading();
-        
-        if (data.ok) {
-          const html = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="UTF-8">
-              <title>Status Page</title>
-              <style>
-                body { font-family: sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
-                h1 { text-align: center; }
-                .service { background: #f8fafc; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #22c55e; }
-                .service.down { border-left-color: #ef4444; }
-                .status { display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
-                .status.up { background: #dcfce7; color: #166534; }
-                .status.down { background: #fee2e2; color: #991b1b; }
-              </style>
-            </head>
-            <body>
-              <h1>🔍 Status Page</h1>
-              ${data.statusPage.map(s => `
-                <div class="service ${s.status}">
-                  <h3>${s.name} <span class="status ${s.status}">${s.status?.toUpperCase()}</span></h3>
-                  <p>${s.url}</p>
-                  <p><strong>Uptime:</strong> ${s.uptime}</p>
-                </div>
-              `).join('')}
-            </body>
-            </html>
-          `;
-          const win = window.open('', '_blank');
-          win.document.write(html);
-          win.document.close();
-        } else {
-          showAlert('Erro ao gerar status page', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    }
-
+    function switchTab(name){document.querySelectorAll('.up-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.up-tab').forEach(t=>t.classList.remove('active'));const map={add:'addSection',check:'checkSection',diagnose:'diagnoseSection',status:'statusSection'};document.getElementById(map[name]).classList.add('active');event.target.classList.add('active')}
+    function fakeUpBars(){let b='';for(let i=0;i<30;i++){const r=Math.random();b+='<div class="up-bar'+(r<.05?' down':r<.1?' partial':'')+'" style="height:'+Math.floor(16+Math.random()*16)+'px"></div>'}return b}
+    async function loadMonitors(){showLoading();try{const data=await apiCall('uptime',{action:'list-monitors'});hideLoading();if(data.ok&&data.monitors){document.getElementById('monitorList').innerHTML=data.monitors.length?data.monitors.map(m=>'<div class="up-monitor"><div class="up-monitor-left"><div class="up-monitor-dot '+(m.status==='up'?'up':m.status==='down'?'down':'unknown')+'"></div><div class="up-monitor-info"><h3>'+m.name+'</h3><span>'+m.url+' &middot; <span class="up-badge '+(m.status||'up')+'">'+(m.status||'unknown').toUpperCase()+'</span></span></div></div><div class="up-monitor-right"><div style="display:flex;gap:2px;align-items:flex-end">'+fakeUpBars()+'</div><div class="up-monitor-actions"><button class="up-mon-btn" onclick="prefillCheck(\''+m.id+'\')">&#128269;</button><button class="up-mon-btn" onclick="prefillDiagnose(\''+m.id+'\')">&#128736;</button></div></div></div>').join(''):'<div class="up-monitor"><div class="up-monitor-left"><div class="up-monitor-dot unknown"></div><div class="up-monitor-info"><h3>Nenhum monitor</h3><span>Adicione o primeiro!</span></div></div></div>'}}catch(err){hideLoading();showAlert('Erro','error')}}
+    function prefillCheck(id){document.getElementById('checkId').value=id;switchTab('check');document.querySelectorAll('.up-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.up-tab')[1].classList.add('active')}
+    function prefillDiagnose(id){document.getElementById('diagnoseId').value=id;switchTab('diagnose');document.querySelectorAll('.up-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.up-tab')[2].classList.add('active')}
+    document.getElementById('addForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('uptime',{action:'add-monitor',name:document.getElementById('monName').value,url:document.getElementById('monUrl').value});hideLoading();if(data.ok){document.getElementById('addOutput').classList.add('show');document.getElementById('addOutput').style.display='block';document.getElementById('addResult').innerHTML='<strong>&#9989; Monitor adicionado!</strong> ID: '+(data.monitor?.id||'--');loadMonitors()}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}});
+    async function checkMonitor(){const id=document.getElementById('checkId').value;if(!id){showAlert('Insira o ID','error');return}showLoading();try{const data=await apiCall('uptime',{action:'check',monitorId:id});hideLoading();const o=document.getElementById('checkOutput');o.classList.add('show');o.style.display='block';document.getElementById('checkResult').innerHTML=data.ok?'<strong>Status:</strong> <span class="up-badge '+(data.status||'up')+'">'+(data.status||'--').toUpperCase()+'</span><br>'+((data.responseTime?'Response: '+data.responseTime+'ms':'')):'Erro: '+(data.error||'falha');loadMonitors()}catch(err){hideLoading();showAlert('Erro','error')}}
+    async function diagnoseMonitor(){const id=document.getElementById('diagnoseId').value;if(!id){showAlert('Insira o ID','error');return}showLoading();try{const data=await apiCall('uptime',{action:'diagnose',monitorId:id});hideLoading();const o=document.getElementById('diagnoseOutput');o.classList.add('show');o.style.display='block';document.getElementById('diagnoseResult').innerHTML=data.ok?(data.diagnosis||JSON.stringify(data,null,2)).replace(/\n/g,'<br>'):'Erro: '+(data.error||'falha')}catch(err){hideLoading();showAlert('Erro','error')}}
+    async function generateStatusPage(){showLoading();try{const data=await apiCall('uptime',{action:'status-page'});hideLoading();if(data.ok){const w=window.open('','_blank');w.document.write(data.html||'<h1>Status Page</h1>');w.document.close()}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}}
     loadMonitors();
   </script>
 </body>

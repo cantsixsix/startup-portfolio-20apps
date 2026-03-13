@@ -1,87 +1,94 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proposal Generator</title>
+  <title>ProposalCraft &#8212; AI Business Proposals</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-proposals{background:#f8f7f4;color:#1c1917;font-family:'Source Sans 3',sans-serif}
+    .pr-nav{background:#1c1917;color:#f8f7f4;padding:0 24px}
+    .pr-nav-inner{max-width:880px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:52px}
+    .pr-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#f8f7f4}
+    .pr-logo-ico{width:28px;height:28px;border:2px solid #d4a574;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .pr-logo-text{font-family:'Libre Baskerville',serif;font-size:16px;font-weight:700}
+    .pr-nav-links a{color:rgba(248,247,244,.6);text-decoration:none;font-size:13px;margin-left:16px;transition:color .2s}
+    .pr-nav-links a:hover{color:#d4a574}
+    .pr-page{max-width:800px;margin:0 auto;padding:48px 24px}
+    .pr-doc{background:white;border:1px solid #e7e5e0;box-shadow:0 1px 8px rgba(0,0,0,.04);padding:48px clamp(24px,5vw,56px);margin-bottom:32px}
+    .pr-watermark{text-align:right;font-size:10px;color:#c4b8a8;text-transform:uppercase;letter-spacing:3px;margin-bottom:32px}
+    .pr-doc-title{font-family:'Libre Baskerville',serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;color:#1c1917;line-height:1.3;margin-bottom:8px}
+    .pr-doc-subtitle{color:#78716c;font-size:15px;margin-bottom:24px;line-height:1.6}
+    .pr-divider{border:none;border-top:1px solid #e7e5e0;margin:24px 0}
+    .pr-doc-meta{display:flex;gap:32px;margin-bottom:24px;flex-wrap:wrap}
+    .pr-meta-item{font-size:12px;color:#a0978e}
+    .pr-meta-item strong{display:block;color:#1c1917;font-weight:600;font-size:14px;margin-bottom:2px}
+    .pr-section-num{font-family:'Libre Baskerville',serif;font-size:48px;font-weight:700;color:rgba(212,165,116,.15);line-height:1;margin-bottom:-12px}
+    .pr-section-head{font-family:'Libre Baskerville',serif;font-size:18px;font-weight:700;color:#1c1917;margin-bottom:12px}
+    .pr-section-body{font-size:14px;color:#57534e;line-height:1.8;margin-bottom:28px}
+    .pr-seal{text-align:center;margin:32px 0 16px;padding:20px;border:2px solid #e7e5e0;border-radius:50%;width:120px;height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-left:auto;margin-right:auto}
+    .pr-seal-ico{font-size:32px;margin-bottom:4px}
+    .pr-seal-text{font-family:'Libre Baskerville',serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#d4a574}
+    .pr-stamp{display:inline-block;border:3px solid #d4a574;border-radius:8px;padding:6px 20px;font-family:'Libre Baskerville',serif;font-size:14px;font-weight:700;color:#d4a574;text-transform:uppercase;letter-spacing:2px;transform:rotate(-3deg);margin-top:16px}
+    .pr-features{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px}
+    @media(max-width:600px){.pr-features{grid-template-columns:1fr}}
+    .pr-feat{padding:20px;border-left:3px solid #d4a574;background:white;border-right:1px solid #e7e5e0;border-top:1px solid #e7e5e0;border-bottom:1px solid #e7e5e0}
+    .pr-feat h3{font-family:'Libre Baskerville',serif;font-size:14px;font-weight:700;margin-bottom:4px;color:#1c1917}
+    .pr-feat p{font-size:12px;color:#78716c;line-height:1.6}
+    .pr-form-doc{background:white;border:1px solid #e7e5e0;box-shadow:0 1px 8px rgba(0,0,0,.04);padding:40px clamp(24px,5vw,56px)}
+    .pr-form-title{font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;margin-bottom:4px}
+    .pr-form-sub{color:#78716c;font-size:13px;margin-bottom:24px}
+    .pr-form-doc label{display:block;font-weight:600;font-size:13px;margin-bottom:4px;color:#1c1917}
+    .pr-form-doc textarea{width:100%;padding:14px;border:1px solid #e7e5e0;font-family:inherit;font-size:14px;resize:vertical;min-height:150px;background:#faf9f7;color:#1c1917;line-height:1.7;transition:border-color .2s}
+    .pr-form-doc textarea:focus{outline:none;border-color:#d4a574}
+    .pr-submit{width:100%;padding:14px;margin-top:16px;border:none;background:#1c1917;color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+    .pr-submit:hover{background:#2c2922}
+    .pr-output{display:none;margin-top:24px}
+    .pr-output.show{display:block}
+    .pr-output-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .pr-output-head h3{font-family:'Libre Baskerville',serif;font-size:18px}
+    .pr-copy-btn{background:#faf9f7;border:1px solid #e7e5e0;padding:6px 14px;font-size:12px;cursor:pointer;color:#78716c;font-family:inherit;transition:all .2s}
+    .pr-copy-btn:hover{border-color:#1c1917;color:#1c1917}
+    .pr-result{background:#faf9f7;border:1px solid #e7e5e0;padding:24px;font-size:14px;line-height:1.8;color:#1c1917}
+    .pr-result h2{font-family:'Libre Baskerville',serif;font-size:16px;margin:16px 0 8px;color:#1c1917}
+    .pr-result h3{font-family:'Libre Baskerville',serif;font-size:14px;margin:12px 0 6px;color:#57534e}
+    .pr-result strong{color:#1c1917}
+    .pr-foot{text-align:center;padding:32px 0;font-size:12px;color:#a0978e}
+    .pr-foot a{color:#d4a574;text-decoration:none}
+  </style>
 </head>
 <body class="app-page app-proposals">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">💼</span>
-        <h1>Proposal Generator</h1>
-      </div>
-      <p class="app-subtitle">Gere propostas comerciais profissionais para freelancers</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <form id="appForm">
-          <div class="form-group">
-            <label for="input">Informações do projeto</label>
-            <textarea id="input" rows="8" required placeholder="Ex: Cliente: E-commerce de moda. Projeto: Redesign completo do site. Escopo: Homepage, catálogo de produtos, checkout. Prazo: 8 semanas. Investimento: R$ 25.000. Tecnologia: React/Next.js. Entregas: 3 milestones (design, desenvolvimento, testes)."></textarea>
-          </div>
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">📄</span>
-            Gerar Proposta
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section hidden" id="outputSection">
-        <div class="output-header">
-          <h2>Sua Proposta</h2>
-          <button onclick="copyOutput()" class="btn-secondary">📋 Copiar</button>
-        </div>
-        <div id="output" class="output-content output-content-spaced output-rich"></div>
-      </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Gerando proposta...</p>
+  <nav class="pr-nav"><div class="pr-nav-inner"><a href="/" class="pr-logo"><div class="pr-logo-ico">&#9998;</div><span class="pr-logo-text">ProposalCraft</span></a><div class="pr-nav-links"><a href="/">&#8592; Voltar</a><a href="#features">Features</a><a href="#demo">Demo</a></div></div></nav>
+  <div class="pr-page">
+    <div class="pr-doc">
+      <div class="pr-watermark">Confidencial</div>
+      <h1 class="pr-doc-title">Propostas Comerciais Geradas por IA</h1>
+      <p class="pr-doc-subtitle">Transforme briefings simples em propostas profissionais, estruturadas e prontas para enviar ao cliente.</p>
+      <hr class="pr-divider">
+      <div class="pr-doc-meta"><div class="pr-meta-item"><strong>ProposalCraft</strong>Plataforma de IA</div><div class="pr-meta-item"><strong>v2.0</strong>Ultima versao</div><div class="pr-meta-item"><strong>SaaS</strong>Tipo de servico</div></div>
+      <hr class="pr-divider">
+      <div class="pr-section-num">01</div><h2 class="pr-section-head">O Problema</h2><p class="pr-section-body">Escrever propostas comerciais leva horas. Cada proposta precisa ser personalizada, bem estruturada e convincente. A maioria dos profissionais gasta mais tempo formatando do que vendendo.</p>
+      <div class="pr-section-num">02</div><h2 class="pr-section-head">A Solucao</h2><p class="pr-section-body">ProposalCraft usa IA para gerar propostas completas a partir de um breve briefing. Inclui escopo, valores, prazos e termos &mdash; tudo em formato profissional, pronto para PDF.</p>
+      <div class="pr-seal"><span class="pr-seal-ico">&#128220;</span><span class="pr-seal-text">Certified AI</span></div>
+      <div style="text-align:center"><span class="pr-stamp">Aprovado</span></div>
     </div>
+    <div id="features"></div>
+    <div class="pr-features"><div class="pr-feat"><h3>&#128209; Escopo Detalhado</h3><p>Gera escopos com entregaveis, timeline e milestones.</p></div><div class="pr-feat"><h3>&#128176; Precificacao</h3><p>Sugere modelos de preco e estruturas de pagamento.</p></div><div class="pr-feat"><h3>&#128221; Termos</h3><p>Inclui termos e condicoes padrao do mercado.</p></div><div class="pr-feat"><h3>&#127919; Personalizado</h3><p>Adapta tom e conteudo ao tipo de cliente e projeto.</p></div></div>
+    <div class="pr-form-doc" id="demo">
+      <h2 class="pr-form-title">&#9998; Gerar Proposta</h2>
+      <p class="pr-form-sub">Descreva o projeto ou servico para gerar uma proposta completa</p>
+      <form id="appForm"><label>Briefing do Projeto</label><textarea id="input" rows="8" required placeholder="Ex: Proposta para redesign do site da empresa XYZ, incluindo 5 paginas, SEO basico e integracao com CRM. Prazo de 30 dias, orcamento estimado em R$15.000..."></textarea><button type="submit" class="pr-submit">&#128220; Gerar Proposta Profissional</button></form>
+      <div class="pr-output" id="outputSection"><div class="pr-output-head"><h3>&#128220; Proposta Gerada</h3><button onclick="copyOutput()" class="pr-copy-btn">&#128203; Copiar</button></div><div class="pr-result" id="output"></div></div>
+    </div>
+    <footer class="pr-foot"><a href="/">&#8592; Voltar ao Portfolio</a> &middot; ProposalCraft &#9998;</footer>
   </div>
-
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Gerando proposta...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('appForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const data = await apiCall('proposals', {
-          input: document.getElementById('input').value
-        });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          document.getElementById('outputSection').classList.remove('hidden');
-          const html = data.output
-            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\n/g, '<br>');
-          
-          document.getElementById('output').innerHTML = html;
-          document.getElementById('output').dataset.raw = data.output;
-        } else {
-          showAlert(data.error || 'Erro ao gerar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    function copyOutput() {
-      const text = document.getElementById('output').dataset.raw;
-      navigator.clipboard.writeText(text).then(() => showAlert('Copiado!'));
-    }
+    document.getElementById('appForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('proposals',{input:document.getElementById('input').value});hideLoading();if(data.ok){const os=document.getElementById('outputSection');os.classList.add('show');os.style.display='block';let html=data.output.replace(/## (.*)/g,'<h2>$1</h2>').replace(/### (.*)/g,'<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');document.getElementById('output').innerHTML=html;document.getElementById('output').dataset.raw=data.output}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro de conexao','error')}});
+    function copyOutput(){navigator.clipboard.writeText(document.getElementById('output').dataset.raw).then(()=>showAlert('Copiado!'))}
   </script>
 </body>
 </html>

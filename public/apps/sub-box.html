@@ -1,170 +1,93 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Subscription Manager</title>
+  <title>BoxCrate &#8212; Subscription Box Manager</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-sub-box{background:#fff5f5;color:#1a1a2e;font-family:'Poppins',sans-serif}
+    .bx-nav{background:white;box-shadow:0 1px 4px rgba(0,0,0,.04);position:sticky;top:0;z-index:100;padding:0 24px}
+    .bx-nav-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .bx-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#1a1a2e}
+    .bx-logo-box{width:32px;height:32px;background:linear-gradient(135deg,#e11d48,#be123c);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;color:white}
+    .bx-logo span{font-weight:800;font-size:18px}
+    .bx-nav-links{display:flex;align-items:center;gap:8px}
+    .bx-nav-links a{color:#9ca3af;text-decoration:none;font-size:13px;font-weight:500;padding:6px 12px;border-radius:8px;transition:all .15s}
+    .bx-nav-links a:hover{background:#fff1f2;color:#e11d48}
+    .bx-cart{position:relative;font-size:18px;cursor:pointer}
+    .bx-cart-count{position:absolute;top:-6px;right:-8px;background:#e11d48;color:white;font-size:9px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .bx-hero{background:linear-gradient(135deg,#e11d48,#be123c);color:white;padding:56px 24px;text-align:center;position:relative;overflow:hidden}
+    .bx-hero::before{content:'&#127873; &#128230; &#127873; &#128230; &#127873;';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:120px;opacity:.06;white-space:nowrap}
+    .bx-hero-badge{display:inline-block;background:rgba(255,255,255,.15);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:600;margin-bottom:16px}
+    .bx-hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;margin-bottom:10px;letter-spacing:-0.5px}
+    .bx-hero p{font-size:15px;opacity:.9;max-width:500px;margin:0 auto;line-height:1.7}
+    .bx-content{max-width:1000px;margin:0 auto;padding:32px 24px}
+    .bx-section-title{font-size:22px;font-weight:800;margin-bottom:4px;color:#1a1a2e;text-align:center}
+    .bx-section-sub{text-align:center;color:#9ca3af;font-size:13px;margin-bottom:24px}
+    .bx-plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px}
+    @media(max-width:768px){.bx-plans-grid{grid-template-columns:1fr}}
+    .bx-plan{background:white;border:2px solid #fecdd3;border-radius:16px;padding:28px;text-align:center;transition:all .2s;position:relative;overflow:hidden}
+    .bx-plan:hover{border-color:#e11d48;transform:translateY(-4px);box-shadow:0 12px 32px rgba(225,29,72,.1)}
+    .bx-plan.featured{border-color:#e11d48}
+    .bx-plan.featured::before{content:'POPULAR';position:absolute;top:16px;right:-28px;background:#e11d48;color:white;font-size:10px;font-weight:700;padding:4px 32px;transform:rotate(45deg)}
+    .bx-plan-ico{font-size:40px;margin-bottom:12px;display:block}
+    .bx-plan h3{font-size:18px;font-weight:700;margin-bottom:4px}
+    .bx-plan-desc{font-size:12px;color:#9ca3af;margin-bottom:16px;line-height:1.5}
+    .bx-plan-price{font-size:36px;font-weight:800;color:#e11d48;margin-bottom:4px}
+    .bx-plan-price span{font-size:14px;font-weight:400;color:#9ca3af}
+    .bx-plan-interval{font-size:12px;color:#9ca3af;margin-bottom:16px}
+    .bx-plan-features{text-align:left;margin-bottom:20px}
+    .bx-plan-feat{font-size:12px;color:#4b5563;padding:4px 0;display:flex;align-items:center;gap:8px}
+    .bx-plan-feat::before{content:'&#10003;';color:#e11d48;font-weight:700;font-size:14px}
+    .bx-plan-btn{width:100%;padding:12px;border:none;border-radius:10px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+    .bx-plan-btn.primary{background:#e11d48;color:white}.bx-plan-btn.primary:hover{background:#be123c}
+    .bx-plan-btn.outline{background:white;color:#e11d48;border:2px solid #fecdd3}.bx-plan-btn.outline:hover{border-color:#e11d48}
+    .bx-tabs{display:flex;gap:4px;margin-bottom:24px;justify-content:center}
+    .bx-tab{padding:8px 20px;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:#fff1f2;color:#e11d48;font-family:inherit;transition:all .15s}
+    .bx-tab.active{background:#e11d48;color:white}
+    .bx-section{display:none}.bx-section.active{display:block}
+    .bx-form-card{background:white;border:1px solid #fecdd3;border-radius:16px;padding:28px;max-width:600px;margin:0 auto}
+    .bx-form-card h2{font-size:18px;font-weight:700;margin-bottom:4px}
+    .bx-form-sub{font-size:13px;color:#9ca3af;margin-bottom:16px}
+    .bx-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:500px){.bx-form-grid{grid-template-columns:1fr}}
+    .bx-field label{display:block;font-size:12px;font-weight:600;color:#4b5563;margin-bottom:4px}
+    .bx-field input,.bx-field select,.bx-field textarea{width:100%;padding:10px 12px;border:1.5px solid #fecdd3;border-radius:10px;font-family:inherit;font-size:13px;color:#1a1a2e;transition:border-color .2s;background:white}
+    .bx-field input:focus,.bx-field select:focus,.bx-field textarea:focus{outline:none;border-color:#e11d48}
+    .bx-field textarea{resize:vertical;min-height:80px}
+    .bx-field.full{grid-column:1/-1}
+    .bx-submit{width:100%;padding:12px;margin-top:12px;border:none;border-radius:10px;background:#e11d48;color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+    .bx-submit:hover{background:#be123c}
+    .bx-output{display:none;margin-top:16px}
+    .bx-output.show{display:block}
+    .bx-result{background:#fff1f2;border-radius:10px;padding:16px;font-size:13px;line-height:1.7}
+    .bx-foot{text-align:center;padding:40px 24px;font-size:12px;color:#9ca3af}
+    .bx-foot a{color:#e11d48;text-decoration:none}
+  </style>
 </head>
 <body class="app-page app-sub-box">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">💳</span>
-        <h1>Subscription Manager</h1>
-      </div>
-      <p class="app-subtitle">Gerencie planos de assinatura e subscribers</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <h2>Criar Plano</h2>
-        <form id="planForm">
-          <div class="form-group">
-            <label for="name">Nome do Plano *</label>
-            <input type="text" id="name" required placeholder="Ex: Premium">
-          </div>
-          
-          <div class="form-group">
-            <label for="description">Descrição</label>
-            <input type="text" id="description" placeholder="Recursos inclusos">
-          </div>
-
-          <div class="grid-2">
-            <div class="form-group">
-              <label for="price">Preço (R$) *</label>
-              <input type="number" id="price" step="0.01" required placeholder="99.90">
-            </div>
-
-            <div class="form-group">
-              <label for="interval">Intervalo</label>
-              <select id="interval">
-                <option value="monthly">Mensal</option>
-                <option value="quarterly">Trimestral</option>
-                <option value="yearly">Anual</option>
-              </select>
-            </div>
-          </div>
-
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">➕</span>
-            Criar Plano
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section">
-        <div class="output-header">
-          <h2>Planos Ativos</h2>
-          <button onclick="loadPlans()" class="btn-secondary">🔄 Atualizar</button>
-        </div>
-        <div id="plansList"></div>
-      </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Processando...</p>
-    </div>
+  <nav class="bx-nav"><div class="bx-nav-inner"><a href="/" class="bx-logo"><div class="bx-logo-box">&#128230;</div><span>BoxCrate</span></a><div class="bx-nav-links"><a href="/">&#8592; Voltar</a><a href="#plans">Planos</a><span class="bx-cart">&#128722;<span class="bx-cart-count">0</span></span></div></div></nav>
+  <div class="bx-hero"><span class="bx-hero-badge">&#127873; Subscription Box Platform</span><h1>Caixas de assinatura incriveis</h1><p>Crie planos de assinatura, gerencie subscribers e entregue experiencias unicas todo mes.</p></div>
+  <div class="bx-content">
+    <div id="plans"><h2 class="bx-section-title">&#127873; Planos Disponiveis</h2><p class="bx-section-sub">Nossos planos de assinatura (crie os seus abaixo!)</p></div>
+    <div class="bx-plans-grid" id="plansGrid"><div class="bx-plan"><span class="bx-plan-ico">&#128230;</span><h3>Carregando...</h3><p class="bx-plan-desc">Buscando planos</p></div></div>
+    <div class="bx-tabs"><button class="bx-tab active" onclick="switchTab('create')">&#10133; Criar Plano</button><button class="bx-tab" onclick="switchTab('subscribe')">&#128176; Assinar</button></div>
+    <div class="bx-section active" id="createSection"><div class="bx-form-card"><h2>&#10133; Novo Plano de Assinatura</h2><p class="bx-form-sub">Defina os detalhes do seu plano</p><form id="createForm"><div class="bx-form-grid"><div class="bx-field"><label>Nome do Plano</label><input type="text" id="planName" required placeholder="Ex: Box Premium"></div><div class="bx-field"><label>Preco (R$)</label><input type="number" step="0.01" id="planPrice" required placeholder="49.90"></div><div class="bx-field"><label>Intervalo</label><select id="planInterval"><option value="monthly">Mensal</option><option value="quarterly">Trimestral</option><option value="yearly">Anual</option></select></div><div class="bx-field full"><label>Descricao</label><textarea id="planDesc" rows="3" required placeholder="O que esta incluso neste plano?"></textarea></div></div><button type="submit" class="bx-submit">&#10133; Criar Plano</button></form><div class="bx-output" id="createOutput"><div class="bx-result" id="createResult"></div></div></div></div>
+    <div class="bx-section" id="subscribeSection"><div class="bx-form-card"><h2>&#128176; Assinar Plano</h2><p class="bx-form-sub">Informe seus dados para assinar</p><form id="subForm"><div class="bx-form-grid"><div class="bx-field"><label>ID do Plano</label><input type="text" id="subPlanId" required placeholder="ID do plano"></div><div class="bx-field"><label>Seu Nome</label><input type="text" id="subName" required placeholder="Seu nome"></div><div class="bx-field full"><label>Email</label><input type="email" id="subEmail" required placeholder="seu@email.com"></div></div><button type="submit" class="bx-submit">&#128176; Assinar Agora</button></form><div class="bx-output" id="subOutput"><div class="bx-result" id="subResult"></div></div></div></div>
+    <footer class="bx-foot"><a href="/">&#8592; Voltar ao Portfolio</a> &middot; BoxCrate &#128230;</footer>
   </div>
-
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Carregando...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('planForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const data = await apiCall('sub-box', {
-          action: 'create-plan',
-          plan: {
-            name: document.getElementById('name').value,
-            description: document.getElementById('description').value,
-            price: parseFloat(document.getElementById('price').value),
-            interval: document.getElementById('interval').value
-          }
-        });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          showAlert('Plano criado!');
-          document.getElementById('planForm').reset();
-          loadPlans();
-        } else {
-          showAlert(data.error || 'Erro', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    async function loadPlans() {
-      showLoading();
-      try {
-        const data = await apiCall('sub-box', { action: 'list-plans' });
-        hideLoading();
-        
-        if (data.ok && data.plans.length > 0) {
-          document.getElementById('plansList').innerHTML = data.plans.map(plan => `
-            <div class="list-item">
-              <div class="row-between mb-20">
-                <div>
-                  <h4>${plan.name}</h4>
-                  <p class="muted">${plan.description || 'Sem descrição'}</p>
-                  <p>
-                    <strong class="price-value">R$ ${plan.price.toFixed(2)}</strong>
-                    <span class="muted"> / ${plan.interval}</span>
-                  </p>
-                </div>
-                <span class="badge badge-success">Ativo</span>
-              </div>
-              <button onclick="subscribe('${plan.id}')" class="btn-secondary">
-                ➕ Adicionar Subscriber
-              </button>
-            </div>
-          `).join('');
-        } else {
-          document.getElementById('plansList').innerHTML = `
-            <div class="empty-state">
-              <div class="empty-state-icon">💳</div>
-              <p>Nenhum plano criado</p>
-            </div>
-          `;
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro ao carregar', 'error');
-      }
-    }
-
-    async function subscribe(planId) {
-      const name = prompt('Nome do subscriber:');
-      const email = prompt('E-mail:');
-      if (!name || !email) return;
-
-      showLoading();
-      try {
-        const data = await apiCall('sub-box', {
-          action: 'subscribe',
-          planId,
-          subscriber: { name, email }
-        });
-        hideLoading();
-        
-        if (data.ok) {
-          showAlert('Subscriber adicionado!');
-        } else {
-          showAlert('Erro', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    }
-
+    const icons=['&#128230;','&#127873;','&#11088;'];
+    function switchTab(name){document.querySelectorAll('.bx-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.bx-tab').forEach(t=>t.classList.remove('active'));const map={create:'createSection',subscribe:'subscribeSection'};document.getElementById(map[name]).classList.add('active');event.target.classList.add('active')}
+    async function loadPlans(){showLoading();try{const data=await apiCall('sub-box',{action:'list-plans'});hideLoading();if(data.ok&&data.plans){document.getElementById('plansGrid').innerHTML=data.plans.length?data.plans.map((p,i)=>'<div class="bx-plan'+(i===1?' featured':'')+'"><span class="bx-plan-ico">'+icons[i%3]+'</span><h3>'+p.name+'</h3><p class="bx-plan-desc">'+(p.description||'Plano de assinatura')+'</p><div class="bx-plan-price">R$'+(p.price||'--')+'<span>/'+({monthly:'mes',quarterly:'tri',yearly:'ano'}[p.interval]||'mes')+'</span></div><button class="bx-plan-btn '+(i===1?'primary':'outline')+'" onclick="prefillSub(\''+p.id+'\')">Assinar</button></div>').join(''):'<div class="bx-plan"><span class="bx-plan-ico">&#128230;</span><h3>Nenhum plano</h3><p class="bx-plan-desc">Crie o primeiro plano abaixo!</p></div>'}}catch(err){hideLoading();showAlert('Erro','error')}}
+    function prefillSub(id){document.getElementById('subPlanId').value=id;switchTab('subscribe');document.querySelectorAll('.bx-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.bx-tab')[1].classList.add('active')}
+    document.getElementById('createForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('sub-box',{action:'create-plan',name:document.getElementById('planName').value,description:document.getElementById('planDesc').value,price:parseFloat(document.getElementById('planPrice').value),interval:document.getElementById('planInterval').value});hideLoading();if(data.ok){document.getElementById('createOutput').classList.add('show');document.getElementById('createOutput').style.display='block';document.getElementById('createResult').innerHTML='<strong>&#9989; Plano criado!</strong> ID: '+(data.plan?.id||'--');loadPlans()}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}});
+    document.getElementById('subForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('sub-box',{action:'subscribe',planId:document.getElementById('subPlanId').value,subscriber:{name:document.getElementById('subName').value,email:document.getElementById('subEmail').value}});hideLoading();if(data.ok){document.getElementById('subOutput').classList.add('show');document.getElementById('subOutput').style.display='block';document.getElementById('subResult').innerHTML='<strong>&#9989; Assinatura realizada!</strong>'}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}});
     loadPlans();
   </script>
 </body>

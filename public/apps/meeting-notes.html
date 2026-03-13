@@ -1,108 +1,96 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meeting Notes AI</title>
+  <title>MeetingPad &#8212; AI Meeting Notes</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-meeting-notes{background:#f5f0e8;color:#2c2417;font-family:'Inter',sans-serif}
+    .mn-spiral{position:fixed;left:60px;top:0;bottom:0;width:2px;background:repeating-linear-gradient(180deg,#d4c5a9 0px,#d4c5a9 20px,transparent 20px,transparent 32px);z-index:0;opacity:.5}
+    @media(max-width:768px){.mn-spiral{display:none}}
+    .mn-nav{background:rgba(245,240,232,.95);backdrop-filter:blur(10px);border-bottom:2px solid #d4c5a9;position:sticky;top:0;z-index:100;padding:0 24px}
+    .mn-nav-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px}
+    .mn-logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:#2c2417}
+    .mn-logo-ico{font-size:22px}.mn-logo-text{font-family:'Caveat',cursive;font-size:24px;font-weight:700}
+    .mn-nav-links{display:flex;gap:16px;align-items:center}
+    .mn-nav-links a{color:#8a7a60;text-decoration:none;font-size:13px;transition:color .2s}
+    .mn-nav-links a:hover{color:#2c2417}
+    .mn-page{max-width:800px;margin:0 auto;padding:40px 24px;position:relative;z-index:1;background:#faf6ef;min-height:calc(100vh - 56px);border-left:1px solid #e8dece;border-right:1px solid #e8dece;background-image:repeating-linear-gradient(transparent,transparent 31px,#e8dece 31px,#e8dece 32px);background-size:100% 32px}
+    .mn-hero{padding:40px 0 32px;border-bottom:2px dashed #d4c5a9;margin-bottom:32px}
+    .mn-date{font-family:'Caveat',cursive;color:#b8a080;font-size:16px;margin-bottom:8px}
+    .mn-hero h1{font-family:'Caveat',cursive;font-size:clamp(2rem,5vw,3rem);color:#2c2417;line-height:1.2;margin-bottom:12px}
+    .mn-hero-sub{color:#8a7a60;font-size:14px;line-height:1.7}
+    .mn-postit{background:#fff9c4;border:1px solid #e8d880;padding:16px 20px;border-radius:2px;box-shadow:2px 2px 5px rgba(0,0,0,.08);transform:rotate(-1deg);margin:24px 0;font-family:'Caveat',cursive;font-size:18px;color:#5a4a20;line-height:1.5;max-width:350px;position:relative}
+    .mn-postit::after{content:'';position:absolute;top:-8px;left:30px;width:40px;height:16px;background:#e8d880;border-radius:2px;opacity:.6}
+    .mn-postit.blue{background:#d0e8ff;border-color:#9ec5f0;color:#1a3a60;transform:rotate(1deg)}
+    .mn-postit.blue::after{background:#9ec5f0}
+    .mn-postit.pink{background:#fce4ec;border-color:#f48fb1;color:#5a1a2a;transform:rotate(-0.5deg)}
+    .mn-postit.pink::after{background:#f48fb1}
+    .mn-section-title{font-family:'Caveat',cursive;font-size:24px;color:#2c2417;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px dashed #d4c5a9;display:flex;align-items:center;gap:8px}
+    .mn-features{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+    @media(max-width:600px){.mn-features{grid-template-columns:1fr}}
+    .mn-feat{background:rgba(255,255,255,.6);border:1px dashed #d4c5a9;border-radius:8px;padding:20px;transition:all .2s}
+    .mn-feat:hover{background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.04)}
+    .mn-feat-ico{font-size:24px;margin-bottom:8px;display:block}
+    .mn-feat h3{font-family:'Caveat',cursive;font-size:20px;color:#2c2417;margin-bottom:4px}
+    .mn-feat p{font-size:12px;color:#8a7a60;line-height:1.6}
+    .mn-demo-section{margin:32px 0;padding:24px;background:rgba(255,255,255,.5);border:1px solid #e8dece;border-radius:8px}
+    .mn-demo-section label{font-weight:600;font-size:14px;color:#2c2417;display:block;margin-bottom:6px}
+    .mn-demo-section select{width:100%;padding:10px 14px;border:1px solid #d4c5a9;border-radius:8px;font-family:inherit;font-size:13px;background:#faf6ef;color:#2c2417;margin-bottom:12px;cursor:pointer}
+    .mn-demo-section textarea{width:100%;padding:16px;border:1px solid #d4c5a9;border-radius:8px;font-family:inherit;font-size:14px;resize:vertical;min-height:140px;background:#faf6ef;color:#2c2417;line-height:32px;transition:all .2s}
+    .mn-demo-section textarea:focus{outline:none;border-color:#b8a080;box-shadow:0 0 0 3px rgba(180,160,128,.15)}
+    .mn-btn{background:#2c2417;color:#faf6ef;padding:12px 24px;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+    .mn-btn:hover{background:#1a1508;transform:translateY(-1px)}
+    .mn-output{margin-top:20px;display:none}
+    .mn-output.show{display:block}
+    .mn-output-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .mn-output-head h3{font-family:'Caveat',cursive;font-size:22px;color:#2c2417}
+    .mn-action-items{margin-bottom:16px}
+    .mn-action{background:#fff9c4;border-left:3px solid #e8b830;padding:10px 16px;margin-bottom:6px;border-radius:0 6px 6px 0;font-size:13px;color:#5a4a20;display:flex;align-items:center;gap:8px}
+    .mn-action::before{content:'&#9744;';font-size:16px}
+    .mn-output-box{background:rgba(255,255,255,.5);border:1px solid #e8dece;border-radius:8px;padding:20px;line-height:32px;font-size:14px;color:#2c2417}
+    .mn-copy-btn{background:#f5f0e8;border:1px solid #d4c5a9;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;color:#8a7a60;font-family:inherit;transition:all .2s}
+    .mn-copy-btn:hover{border-color:#2c2417;color:#2c2417}
+    .mn-foot{text-align:center;padding:32px 0;font-size:12px;color:#b8a080;font-family:'Caveat',cursive;font-size:16px}
+    .mn-foot a{color:#8a7a60;text-decoration:none}
+    @media(max-width:768px){.mn-nav-links a:not([href="/"]){display:none}}
+  </style>
 </head>
 <body class="app-page app-meeting-notes">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">📝</span>
-        <h1>Meeting Notes AI</h1>
+  <div class="mn-spiral"></div>
+  <nav class="mn-nav"><div class="mn-nav-inner"><a href="/" class="mn-logo"><span class="mn-logo-ico">&#128221;</span><span class="mn-logo-text">MeetingPad</span></a><div class="mn-nav-links"><a href="/">&#8592; Voltar</a><a href="#features">Features</a><a href="#demo">Demo</a></div></div></nav>
+  <div class="mn-page">
+    <section class="mn-hero"><div class="mn-date">&#128197; Notas de Reuniao &#8212; Hoje</div><h1>Nunca mais perca uma acao importante &#10024;</h1><p class="mn-hero-sub">Cole a transcricao da reuniao e a IA extrai notas estruturadas, action items e decisoes. Funciona para vendas, medicina, juridico e mais.</p></section>
+    <div class="mn-postit">&#128161; Dica: funciona melhor com transcricoes longas e detalhadas!</div>
+    <h2 class="mn-section-title" id="features">&#128204; Features</h2>
+    <div class="mn-features"><div class="mn-feat"><span class="mn-feat-ico">&#129302;</span><h3>IA Especializada</h3><p>Modelos treinados para vendas, medicina, juridico e contextos gerais.</p></div><div class="mn-feat"><span class="mn-feat-ico">&#9889;</span><h3>Action Items</h3><p>Extrai acoes automaticamente com responsaveis e prazos.</p></div><div class="mn-feat"><span class="mn-feat-ico">&#128221;</span><h3>Notas Estruturadas</h3><p>Organiza topicos, decisoes e follow-ups.</p></div><div class="mn-feat"><span class="mn-feat-ico">&#127919;</span><h3>Multi-Nicho</h3><p>Templates especificos para cada tipo de reuniao.</p></div></div>
+    <div class="mn-postit blue">&#128203; Action items sao extraidos automaticamente e destacados!</div>
+    <h2 class="mn-section-title" id="demo">&#9999;&#65039; Suas Notas</h2>
+    <div class="mn-demo-section">
+      <form id="appForm">
+        <label>Tipo de Reuniao</label>
+        <select id="niche"><option value="geral">&#128196; Geral</option><option value="vendas">&#128176; Vendas</option><option value="medicina">&#129657; Medicina</option><option value="legal">&#9878;&#65039; Juridico</option></select>
+        <label>Transcricao ou notas da reuniao</label>
+        <textarea id="input" rows="8" required placeholder="Cole aqui a transcricao da reuniao ou suas anotacoes..."></textarea>
+        <div style="margin-top:14px"><button type="submit" class="mn-btn" style="width:100%;justify-content:center">&#10024; Gerar Notas Estruturadas</button></div>
+      </form>
+      <div class="mn-output" id="outputSection">
+        <div class="mn-output-head"><h3>&#128203; Notas da Reuniao</h3><button onclick="copyOutput()" class="mn-copy-btn">&#128203; Copiar</button></div>
+        <div id="actionItems" class="mn-action-items"></div>
+        <div class="mn-output-box" id="output"></div>
       </div>
-      <p class="app-subtitle">Transforme transcrições em notas estruturadas</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <form id="appForm">
-          <div class="form-group">
-            <label for="niche">Tipo de Reunião</label>
-            <select id="niche">
-              <option value="geral">Geral</option>
-              <option value="vendas">Vendas</option>
-              <option value="medicina">Medicina</option>
-              <option value="legal">Jurídico</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="input">Transcrição ou notas da reunião</label>
-            <textarea id="input" rows="10" required placeholder="Cole aqui a transcrição da reunião ou suas anotações..."></textarea>
-          </div>
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">✨</span>
-            Gerar Notas Estruturadas
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section hidden" id="outputSection">
-        <div class="output-header">
-          <h2>Notas da Reunião</h2>
-          <button onclick="copyOutput()" class="btn-secondary">📋 Copiar</button>
-        </div>
-        
-        <div id="actionItems" class="mb-20"></div>
-        <div id="output" class="output-content"></div>
-      </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Estruturando notas...</p>
     </div>
+    <div class="mn-postit pink">&#10084;&#65039; Feito com carinho para organizar suas reunioes!</div>
+    <footer class="mn-foot"><a href="/">&#8592; Voltar ao Portfolio</a> &middot; MeetingPad &#128221;</footer>
   </div>
-
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Estruturando notas...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('appForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const data = await apiCall('meeting-notes', {
-          input: document.getElementById('input').value,
-          niche: document.getElementById('niche').value
-        });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          document.getElementById('outputSection').classList.remove('hidden');
-          
-          // Action items destacados
-          if (data.actionItems && data.actionItems.length > 0) {
-            document.getElementById('actionItems').innerHTML = `
-              <h3 class="section-title">⚡ Action Items</h3>
-              ${data.actionItems.map(item => `
-                <div class="list-item list-item-tight">
-                  <p>${item}</p>
-                </div>
-              `).join('')}
-            `;
-          }
-          
-          const html = data.output.replace(/\n/g, '<br>');
-          document.getElementById('output').innerHTML = html;
-          document.getElementById('output').dataset.raw = data.output;
-        } else {
-          showAlert(data.error || 'Erro ao gerar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    function copyOutput() {
-      const text = document.getElementById('output').dataset.raw;
-      navigator.clipboard.writeText(text).then(() => showAlert('Copiado!'));
-    }
+    document.getElementById('appForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('meeting-notes',{input:document.getElementById('input').value,niche:document.getElementById('niche').value});hideLoading();if(data.ok){const os=document.getElementById('outputSection');os.classList.add('show');os.style.display='block';if(data.actionItems&&data.actionItems.length>0){document.getElementById('actionItems').innerHTML=data.actionItems.map(item=>'<div class="mn-action">'+item+'</div>').join('')}document.getElementById('output').innerHTML=data.output.replace(/\n/g,'<br>');document.getElementById('output').dataset.raw=data.output}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro de conexao','error')}});
+    function copyOutput(){navigator.clipboard.writeText(document.getElementById('output').dataset.raw).then(()=>showAlert('Copiado!'))}
   </script>
 </body>
 </html>

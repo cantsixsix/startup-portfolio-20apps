@@ -1,96 +1,106 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Screenshot to Code</title>
+  <title>CodeSnap &#8212; Screenshot to Code</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-screenshot-to-code{background:#1e1e1e;color:#d4d4d4;font-family:'Inter',sans-serif;display:flex;flex-direction:column;min-height:100vh}
+    .cs-titlebar{background:#323233;height:36px;display:flex;align-items:center;padding:0 12px;gap:8px;border-bottom:1px solid #252526;flex-shrink:0}
+    .cs-dots{display:flex;gap:6px}.cs-dot{width:10px;height:10px;border-radius:50%}.cs-dot.r{background:#ff5f57}.cs-dot.y{background:#febc2e}.cs-dot.g{background:#28c840}
+    .cs-titlebar-text{flex:1;text-align:center;font-size:12px;color:#8a8a8a;font-family:'JetBrains Mono',monospace}
+    .cs-back{color:#8a8a8a;text-decoration:none;font-size:12px;display:flex;align-items:center;gap:4px;transition:color .2s}
+    .cs-back:hover{color:#0098ff}
+    .cs-layout{display:flex;flex:1;overflow:hidden}
+    .cs-sidebar{width:48px;background:#333333;border-right:1px solid #252526;display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:16px;flex-shrink:0}
+    .cs-sb-ico{font-size:18px;opacity:.5;cursor:pointer;transition:opacity .2s;padding:6px}
+    .cs-sb-ico:hover,.cs-sb-ico.active{opacity:1}
+    .cs-explorer{width:220px;background:#252526;border-right:1px solid #1e1e1e;padding:12px 0;flex-shrink:0;overflow-y:auto}
+    @media(max-width:768px){.cs-explorer{display:none}}
+    .cs-exp-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#8a8a8a;padding:0 16px;margin-bottom:12px}
+    .cs-exp-file{display:flex;align-items:center;gap:8px;padding:4px 16px;font-size:12px;color:#ccc;cursor:pointer;transition:all .15s;font-family:'JetBrains Mono',monospace}
+    .cs-exp-file:hover{background:rgba(255,255,255,.06)}
+    .cs-exp-file.active{background:rgba(0,152,255,.15);color:#0098ff}
+    .cs-exp-file-ico{font-size:14px}
+    .cs-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .cs-tabs{display:flex;background:#252526;border-bottom:1px solid #1e1e1e;flex-shrink:0}
+    .cs-tab{padding:8px 20px;font-size:12px;color:#8a8a8a;cursor:pointer;border-right:1px solid #1e1e1e;display:flex;align-items:center;gap:6px;transition:all .15s;font-family:'JetBrains Mono',monospace}
+    .cs-tab.active{background:#1e1e1e;color:#d4d4d4;border-top:1px solid #0098ff;margin-top:-1px}
+    .cs-tab:hover{color:#d4d4d4}
+    .cs-editor{flex:1;overflow-y:auto;position:relative}
+    .cs-editor-content{padding:20px 24px 20px 60px;position:relative}
+    .cs-line-nums{position:absolute;left:16px;top:20px;color:#505050;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:22px;text-align:right;width:28px;user-select:none}
+    .cs-welcome{padding:60px 40px;text-align:center}
+    .cs-welcome-logo{font-size:48px;margin-bottom:16px}
+    .cs-welcome h1{font-size:24px;font-weight:600;margin-bottom:8px;color:#ccc}
+    .cs-welcome p{font-size:13px;color:#8a8a8a;max-width:440px;margin:0 auto 24px;line-height:1.7}
+    .cs-welcome-keys{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+    .cs-key{background:#2d2d2d;border:1px solid #404040;border-radius:6px;padding:6px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8a8a8a}
+    .cs-key em{color:#0098ff;font-style:normal}
+    .cs-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:480px;margin:0 auto 32px}
+    @media(max-width:600px){.cs-features{grid-template-columns:1fr}}
+    .cs-feat{text-align:left;background:#2d2d2d;border:1px solid #404040;border-radius:8px;padding:14px}
+    .cs-feat h3{font-size:13px;font-weight:600;color:#ccc;margin-bottom:4px}
+    .cs-feat p{font-size:11px;color:#8a8a8a;line-height:1.5}
+    .cs-demo{max-width:560px;margin:0 auto;text-align:left}
+    .cs-demo-title{font-family:'JetBrains Mono',monospace;font-size:13px;color:#0098ff;margin-bottom:12px}
+    .cs-demo textarea{width:100%;padding:14px;background:#2d2d2d;border:1px solid #404040;border-radius:8px;color:#d4d4d4;font-family:'JetBrains Mono',monospace;font-size:13px;resize:vertical;min-height:120px;transition:border-color .2s}
+    .cs-demo textarea:focus{outline:none;border-color:#0098ff}
+    .cs-gen-btn{width:100%;margin-top:12px;padding:12px;background:#0098ff;color:white;border:none;border-radius:6px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+    .cs-gen-btn:hover{background:#0080d4}
+    .cs-output{display:none;margin-top:20px}
+    .cs-output.show{display:block}
+    .cs-output-tabs{display:flex;gap:0;margin-bottom:0}
+    .cs-otab{padding:8px 16px;font-size:12px;font-family:'JetBrains Mono',monospace;background:#2d2d2d;color:#8a8a8a;cursor:pointer;border:1px solid #404040;border-bottom:none}
+    .cs-otab.active{background:#1e1e1e;color:#0098ff}
+    .cs-output-code{background:#1e1e1e;border:1px solid #404040;border-radius:0 0 8px 8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:20px;overflow-x:auto;max-height:300px;overflow-y:auto;white-space:pre-wrap;color:#d4d4d4}
+    .cs-output-actions{display:flex;gap:8px;margin-top:12px}
+    .cs-act-btn{padding:8px 16px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;transition:all .2s;border:1px solid #404040;background:#2d2d2d;color:#ccc}
+    .cs-act-btn:hover{border-color:#0098ff;color:#0098ff}
+    .cs-act-btn.primary{background:#0098ff;color:white;border-color:#0098ff}
+    .cs-act-btn.primary:hover{background:#0080d4}
+    .cs-statusbar{background:#007acc;height:24px;display:flex;align-items:center;padding:0 12px;gap:12px;flex-shrink:0}
+    .cs-statusbar span{font-size:11px;color:rgba(255,255,255,.9);font-family:'JetBrains Mono',monospace}
+  </style>
 </head>
 <body class="app-page app-screenshot-to-code">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">🖼️</span>
-        <h1>Screenshot to Code</h1>
-      </div>
-      <p class="app-subtitle">Transforme designs em código React funcional</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <form id="appForm">
-          <div class="form-group">
-            <label for="input">Descreva o design que você quer</label>
-            <textarea id="input" rows="6" required placeholder="Ex: Landing page com header fixo (logo à esquerda, menu à direita), hero section com título grande e botão CTA azul, seção de 3 cards com ícones, footer escuro com links sociais"></textarea>
-          </div>
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">⚡</span>
-            Gerar Código React
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section hidden" id="outputSection">
-        <div class="output-header">
-          <h2>Código Gerado</h2>
-          <div class="output-actions">
-            <button onclick="copyCode()" class="btn-secondary">📋 Copiar Código</button>
-            <button onclick="openPreview()" class="btn-secondary">👁️ Preview</button>
+  <div class="cs-titlebar"><div class="cs-dots"><div class="cs-dot r"></div><div class="cs-dot y"></div><div class="cs-dot g"></div></div><span class="cs-titlebar-text">CodeSnap &#8212; Screenshot to Code</span><a href="/" class="cs-back">&#8592; Voltar</a></div>
+  <div class="cs-layout">
+    <div class="cs-sidebar"><span class="cs-sb-ico active">&#128196;</span><span class="cs-sb-ico">&#128269;</span><span class="cs-sb-ico">&#128268;</span><span class="cs-sb-ico">&#9654;</span><span class="cs-sb-ico">&#128736;</span></div>
+    <div class="cs-explorer"><div class="cs-exp-title">CodeSnap</div><div class="cs-exp-file active"><span class="cs-exp-file-ico">&#128196;</span>welcome.md</div><div class="cs-exp-file"><span class="cs-exp-file-ico">&#128196;</span>output.html</div><div class="cs-exp-file"><span class="cs-exp-file-ico">&#128196;</span>style.css</div><div class="cs-exp-file"><span class="cs-exp-file-ico">&#128196;</span>app.js</div><div class="cs-exp-file"><span class="cs-exp-file-ico">&#128448;</span>screenshot.png</div></div>
+    <div class="cs-main">
+      <div class="cs-tabs"><div class="cs-tab active"><span>&#128196;</span>welcome.md</div><div class="cs-tab"><span>&#128196;</span>output.html</div></div>
+      <div class="cs-editor">
+        <div class="cs-welcome">
+          <div class="cs-welcome-logo">&#128248; &#8594; &#128187;</div>
+          <h1>Screenshot to Code</h1>
+          <p>Descreva um layout ou cole uma descricao de screenshot. A IA gera HTML/CSS funcional instantaneamente.</p>
+          <div class="cs-welcome-keys"><span class="cs-key"><em>Ctrl+G</em> Gerar</span><span class="cs-key"><em>Ctrl+P</em> Preview</span><span class="cs-key"><em>Ctrl+C</em> Copiar</span></div>
+          <div class="cs-features"><div class="cs-feat"><h3>&#127912; Layout Detection</h3><p>Interpreta descricoes de layouts e gera grid/flexbox.</p></div><div class="cs-feat"><h3>&#128295; HTML + CSS</h3><p>Codigo limpo, semantico e responsivo.</p></div><div class="cs-feat"><h3>&#128064; Live Preview</h3><p>Visualize o resultado em tempo real no browser.</p></div><div class="cs-feat"><h3>&#9889; Rapido</h3><p>Geracao em segundos com IA otimizada.</p></div></div>
+          <div class="cs-demo">
+            <div class="cs-demo-title">// descreva o layout</div>
+            <form id="appForm"><textarea id="input" rows="5" required placeholder="Ex: Um hero section com fundo azul escuro, titulo centralizado grande em branco, subtitulo menor, e um botao verde arredondado..."></textarea><button type="submit" class="cs-gen-btn">&#9654; Gerar Codigo</button></form>
+            <div class="cs-output" id="outputSection">
+              <div class="cs-output-tabs"><span class="cs-otab active">output.html</span></div>
+              <pre class="cs-output-code" id="output"></pre>
+              <div class="cs-output-actions"><button onclick="copyOutput()" class="cs-act-btn">&#128203; Copiar</button><button onclick="openPreview()" class="cs-act-btn primary">&#128064; Preview</button></div>
+            </div>
           </div>
         </div>
-        <pre id="code" class="output-code"></pre>
       </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Gerando código React...</p>
     </div>
   </div>
-
+  <div class="cs-statusbar"><span>&#10003; Ready</span><span>UTF-8</span><span>HTML</span><span>CodeSnap v1.0</span></div>
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Gerando codigo...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    let generatedData = null;
-
-    document.getElementById('appForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const data = await apiCall('screenshot-to-code', {
-          input: document.getElementById('input').value
-        });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          generatedData = data;
-          document.getElementById('outputSection').classList.remove('hidden');
-          document.getElementById('code').textContent = data.code || data.output;
-        } else {
-          showAlert(data.error || 'Erro ao gerar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    function copyCode() {
-      const code = document.getElementById('code').textContent;
-      navigator.clipboard.writeText(code).then(() => showAlert('Código copiado!'));
-    }
-
-    function openPreview() {
-      if (generatedData && generatedData.previewHtml) {
-        const win = window.open('', '_blank');
-        win.document.write(generatedData.previewHtml);
-        win.document.close();
-      } else {
-        showAlert('Preview não disponível', 'error');
-      }
-    }
+    let generatedData=null;
+    document.getElementById('appForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('screenshot-to-code',{input:document.getElementById('input').value});hideLoading();if(data.ok){generatedData=data;const os=document.getElementById('outputSection');os.classList.add('show');os.style.display='block';document.getElementById('output').textContent=data.output}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro de conexao','error')}});
+    function copyOutput(){if(!generatedData)return;navigator.clipboard.writeText(generatedData.output).then(()=>showAlert('Copiado!'))}
+    function openPreview(){if(!generatedData)return;const w=window.open('','_blank');w.document.write(generatedData.previewHtml||generatedData.output);w.document.close()}
   </script>
 </body>
 </html>

@@ -1,146 +1,115 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Price Monitor</title>
+  <title>PriceRadar &#8212; AI Price Monitor</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-price-monitor{background:#0a0e17;color:#c5cdd8;font-family:'IBM Plex Sans',sans-serif}
+    .pm-topbar{background:#0d1220;border-bottom:1px solid #1a2332;height:40px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100}
+    .pm-topbar-left{display:flex;align-items:center;gap:12px}
+    .pm-logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:#c5cdd8}
+    .pm-logo-ico{color:#00d4aa;font-size:16px;font-weight:700;font-family:'IBM Plex Mono',monospace;background:rgba(0,212,170,.1);padding:2px 6px;border-radius:3px}
+    .pm-logo span{font-weight:700;font-size:14px}
+    .pm-ticker{display:flex;gap:16px;overflow:hidden;font-family:'IBM Plex Mono',monospace;font-size:11px}
+    .pm-tick{display:flex;gap:4px;white-space:nowrap}
+    .pm-tick-name{color:#8892a4}.pm-tick-val{color:#c5cdd8}
+    .pm-tick-chg.up{color:#00d4aa}.pm-tick-chg.down{color:#ff4757}
+    .pm-topbar-right a{color:#8892a4;text-decoration:none;font-size:12px;transition:color .2s}
+    .pm-topbar-right a:hover{color:#00d4aa}
+    .pm-grid{display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 40px)}
+    @media(max-width:768px){.pm-grid{grid-template-columns:1fr}}
+    .pm-panel{background:#0d1220;border-right:1px solid #1a2332;padding:16px;overflow-y:auto}
+    .pm-panel-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:#4a5568;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #1a2332}
+    .pm-card{background:#111827;border:1px solid #1a2332;border-radius:8px;padding:14px;margin-bottom:8px;transition:all .2s;cursor:default}
+    .pm-card:hover{border-color:#00d4aa40}
+    .pm-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .pm-card-name{font-weight:600;font-size:13px;color:#e2e8f0}
+    .pm-card-price{font-family:'IBM Plex Mono',monospace;font-weight:700;color:#00d4aa;font-size:14px}
+    .pm-card-bar{height:3px;background:#1a2332;border-radius:2px;overflow:hidden}
+    .pm-card-bar-fill{height:100%;border-radius:2px}
+    .pm-main{padding:20px;overflow-y:auto}
+    .pm-main-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+    .pm-main-header h1{font-size:20px;font-weight:700;color:#e2e8f0}
+    .pm-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+    @media(max-width:900px){.pm-kpis{grid-template-columns:1fr 1fr}}
+    @media(max-width:500px){.pm-kpis{grid-template-columns:1fr}}
+    .pm-kpi{background:#111827;border:1px solid #1a2332;border-radius:8px;padding:16px}
+    .pm-kpi-label{font-size:11px;color:#4a5568;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+    .pm-kpi-val{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:#e2e8f0}
+    .pm-kpi-val.green{color:#00d4aa}.pm-kpi-val.red{color:#ff4757}.pm-kpi-val.blue{color:#3b82f6}
+    .pm-chart-area{background:#111827;border:1px solid #1a2332;border-radius:8px;padding:20px;margin-bottom:20px;position:relative;height:200px;overflow:hidden}
+    .pm-chart-title{font-size:12px;font-weight:600;color:#4a5568;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+    .pm-chart-bars{display:flex;align-items:flex-end;gap:4px;height:140px;padding-top:20px}
+    .pm-chart-bar{flex:1;background:linear-gradient(180deg,#00d4aa,#00d4aa40);border-radius:3px 3px 0 0;transition:height .5s;min-width:6px}
+    .pm-form-area{background:#111827;border:1px solid #1a2332;border-radius:8px;padding:20px}
+    .pm-form-title{font-size:14px;font-weight:700;color:#e2e8f0;margin-bottom:4px}
+    .pm-form-sub{font-size:12px;color:#4a5568;margin-bottom:16px}
+    .pm-rows{margin-bottom:12px}
+    .pm-row{display:flex;gap:8px;margin-bottom:6px}
+    .pm-row input{flex:1;padding:10px;background:#0a0e17;border:1px solid #1a2332;border-radius:6px;color:#c5cdd8;font-family:'IBM Plex Mono',monospace;font-size:13px;transition:border-color .2s}
+    .pm-row input:focus{outline:none;border-color:#00d4aa}
+    .pm-row input::placeholder{color:#2d3a4e}
+    .pm-add-row{background:transparent;border:1px dashed #1a2332;color:#4a5568;padding:8px;border-radius:6px;font-size:12px;cursor:pointer;width:100%;font-family:inherit;transition:all .2s;margin-bottom:12px}
+    .pm-add-row:hover{border-color:#00d4aa;color:#00d4aa}
+    .pm-submit{width:100%;padding:12px;background:linear-gradient(135deg,#00d4aa,#00b894);color:#0a0e17;border:none;border-radius:6px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+    .pm-submit:hover{opacity:.9}
+    .pm-output{display:none;margin-top:16px}
+    .pm-output.show{display:block}
+    .pm-output-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .pm-output-head h3{font-size:14px;font-weight:700;color:#e2e8f0}
+    .pm-copy-btn{background:#0a0e17;border:1px solid #1a2332;padding:6px 12px;border-radius:4px;font-size:11px;color:#4a5568;cursor:pointer;font-family:inherit;transition:all .2s}
+    .pm-copy-btn:hover{border-color:#00d4aa;color:#00d4aa}
+    .pm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+    .pm-stat{background:#0a0e17;border-radius:6px;padding:12px;text-align:center}
+    .pm-stat-label{font-size:10px;color:#4a5568;text-transform:uppercase;letter-spacing:1px}
+    .pm-stat-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;color:#00d4aa}
+    .pm-result{background:#0a0e17;border:1px solid #1a2332;border-radius:6px;padding:16px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.8;color:#c5cdd8}
+    .pm-status{background:#0d1220;border-top:1px solid #1a2332;height:28px;display:flex;align-items:center;padding:0 16px;gap:16px}
+    .pm-status span{font-size:10px;font-family:'IBM Plex Mono',monospace;color:#4a5568}
+    .pm-status .pm-live{color:#00d4aa;display:flex;align-items:center;gap:4px}
+    .pm-status .pm-live::before{content:'';width:6px;height:6px;border-radius:50%;background:#00d4aa;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  </style>
 </head>
 <body class="app-page app-price-monitor">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">💰</span>
-        <h1>Price Monitor</h1>
+  <div class="pm-topbar"><div class="pm-topbar-left"><a href="/" class="pm-logo"><span class="pm-logo-ico">PR</span><span>PriceRadar</span></a><div class="pm-ticker"><div class="pm-tick"><span class="pm-tick-name">BTC</span><span class="pm-tick-val">$67,240</span><span class="pm-tick-chg up">+2.4%</span></div><div class="pm-tick"><span class="pm-tick-name">ETH</span><span class="pm-tick-val">$3,412</span><span class="pm-tick-chg down">-0.8%</span></div><div class="pm-tick"><span class="pm-tick-name">AAPL</span><span class="pm-tick-val">$192</span><span class="pm-tick-chg up">+1.1%</span></div></div></div><div class="pm-topbar-right"><a href="/">&#8592; Voltar</a></div></div>
+  <div class="pm-grid">
+    <div class="pm-panel">
+      <div class="pm-panel-title">Watchlist</div>
+      <div class="pm-card"><div class="pm-card-head"><span class="pm-card-name">Produto A</span><span class="pm-card-price">R$149</span></div><div class="pm-card-bar"><div class="pm-card-bar-fill" style="width:72%;background:#00d4aa"></div></div></div>
+      <div class="pm-card"><div class="pm-card-head"><span class="pm-card-name">Produto B</span><span class="pm-card-price">R$89</span></div><div class="pm-card-bar"><div class="pm-card-bar-fill" style="width:45%;background:#3b82f6"></div></div></div>
+      <div class="pm-card"><div class="pm-card-head"><span class="pm-card-name">Produto C</span><span class="pm-card-price">R$299</span></div><div class="pm-card-bar"><div class="pm-card-bar-fill" style="width:90%;background:#ff4757"></div></div></div>
+      <div class="pm-panel-title" style="margin-top:20px">Insights</div>
+      <div style="font-size:12px;color:#4a5568;line-height:1.7">Monitore precos de concorrentes e receba analises inteligentes com IA.</div>
+    </div>
+    <div class="pm-main">
+      <div class="pm-main-header"><h1>&#128200; Dashboard</h1></div>
+      <div class="pm-kpis"><div class="pm-kpi"><div class="pm-kpi-label">Media</div><div class="pm-kpi-val green" id="kpiAvg">--</div></div><div class="pm-kpi"><div class="pm-kpi-label">Minimo</div><div class="pm-kpi-val blue" id="kpiMin">--</div></div><div class="pm-kpi"><div class="pm-kpi-label">Maximo</div><div class="pm-kpi-val red" id="kpiMax">--</div></div><div class="pm-kpi"><div class="pm-kpi-label">Itens</div><div class="pm-kpi-val" id="kpiCount">0</div></div></div>
+      <div class="pm-chart-area"><div class="pm-chart-title">Distribuicao de Precos</div><div class="pm-chart-bars" id="chartBars"></div></div>
+      <div class="pm-form-area">
+        <h2 class="pm-form-title">&#128202; Analisar Precos</h2>
+        <p class="pm-form-sub">Adicione produtos e precos para receber uma analise de mercado</p>
+        <form id="appForm"><div class="pm-rows" id="priceRows"></div><button type="button" onclick="addPriceRow()" class="pm-add-row">+ Adicionar Produto</button><button type="submit" class="pm-submit">&#128200; Analisar Precos</button></form>
+        <div class="pm-output" id="outputSection"><div class="pm-output-head"><h3>&#128202; Analise</h3><button onclick="copyOutput()" class="pm-copy-btn">&#128203; Copiar</button></div><div class="pm-stats" id="statsGrid"></div><div class="pm-result" id="output"></div></div>
       </div>
-      <p class="app-subtitle">Monitore preços de concorrentes e receba análises competitivas</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <h2>Adicionar Snapshot de Preços</h2>
-        <form id="priceForm">
-          <div id="priceInputs">
-            <div class="grid-2 price-row">
-              <div class="form-group">
-                <input type="text" class="competitor-name" placeholder="Nome do concorrente" required>
-              </div>
-              <div class="form-group">
-                <input type="number" class="competitor-price" placeholder="99.00" step="0.01" required>
-              </div>
-            </div>
-          </div>
-          
-          <button type="button" onclick="addPriceRow()" class="btn-secondary btn-block-spaced">
-            ➕ Adicionar Concorrente
-          </button>
-
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">📊</span>
-            Salvar e Analisar
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section hidden" id="outputSection">
-        <div class="output-header">
-          <h2>Análise Competitiva</h2>
-        </div>
-        
-        <div id="stats" class="stats-grid mb-20"></div>
-        <div id="analysis" class="output-content"></div>
-      </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Analisando preços...</p>
     </div>
   </div>
-
+  <div class="pm-status"><span class="pm-live">LIVE</span><span>PriceRadar v1.0</span><span>API: Connected</span></div>
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Analisando precos...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    function addPriceRow() {
-      const container = document.getElementById('priceInputs');
-      const row = document.createElement('div');
-      row.className = 'grid-2 price-row';
-      row.innerHTML = `
-        <div class="form-group">
-          <input type="text" class="competitor-name" placeholder="Nome do concorrente" required>
-        </div>
-        <div class="form-group">
-          <input type="number" class="competitor-price" placeholder="99.00" step="0.01" required>
-        </div>
-      `;
-      container.appendChild(row);
-    }
-
-    document.getElementById('priceForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const names = document.querySelectorAll('.competitor-name');
-        const prices = document.querySelectorAll('.competitor-price');
-        
-        const priceData = Array.from(names).map((nameInput, i) => ({
-          name: nameInput.value,
-          price: parseFloat(prices[i].value)
-        })).filter(p => p.name && p.price);
-        
-        const data = await apiCall('price-monitor', { prices: priceData });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          document.getElementById('outputSection').classList.remove('hidden');
-          
-          // Stats
-          if (data.latestPrices && data.latestPrices.length > 0) {
-            const priceValues = data.latestPrices.map(p => p.price);
-            const avg = (priceValues.reduce((a, b) => a + b, 0) / priceValues.length).toFixed(2);
-            const min = Math.min(...priceValues).toFixed(2);
-            const max = Math.max(...priceValues).toFixed(2);
-            
-            document.getElementById('stats').innerHTML = `
-              <div class="stat-card">
-                <span class="stat-value">$${avg}</span>
-                <span class="stat-label">Média</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-value">$${min}</span>
-                <span class="stat-label">Menor</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-value">$${max}</span>
-                <span class="stat-label">Maior</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-value">${data.priceHistory || 0}</span>
-                <span class="stat-label">Snapshots</span>
-              </div>
-            `;
-          }
-          
-          // Analysis
-          if (data.output) {
-            const html = data.output.replace(/\n/g, '<br>');
-            document.getElementById('analysis').innerHTML = html;
-          }
-          
-          showAlert('Análise concluída!');
-        } else {
-          showAlert(data.error || 'Erro ao analisar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    // Add 2 rows by default
-    addPriceRow();
+    function addPriceRow(){const r=document.getElementById('priceRows');const d=document.createElement('div');d.className='pm-row';d.innerHTML='<input type="text" placeholder="Nome do produto" class="pname"><input type="number" step="0.01" placeholder="Preco (R$)" class="pprice">';r.appendChild(d);updateKPIs()}
+    function updateKPIs(){const prices=getPrices();const vals=prices.map(p=>p.price).filter(v=>v>0);document.getElementById('kpiCount').textContent=vals.length;if(vals.length){const avg=(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2);const min=Math.min(...vals).toFixed(2);const max=Math.max(...vals).toFixed(2);document.getElementById('kpiAvg').textContent='R$'+avg;document.getElementById('kpiMin').textContent='R$'+min;document.getElementById('kpiMax').textContent='R$'+max;renderChart(vals)}else{document.getElementById('kpiAvg').textContent='--';document.getElementById('kpiMin').textContent='--';document.getElementById('kpiMax').textContent='--'}}
+    function renderChart(vals){const c=document.getElementById('chartBars');const mx=Math.max(...vals);c.innerHTML=vals.map(v=>'<div class="pm-chart-bar" style="height:'+((v/mx)*100)+'%"></div>').join('')}
+    function getPrices(){const rows=document.querySelectorAll('.pm-row');return Array.from(rows).map(r=>({name:r.querySelector('.pname').value,price:parseFloat(r.querySelector('.pprice').value)||0}))}
+    document.getElementById('priceRows').addEventListener('input',updateKPIs);
+    addPriceRow();addPriceRow();
+    document.getElementById('appForm').addEventListener('submit',async(e)=>{e.preventDefault();const priceData=getPrices().filter(p=>p.name&&p.price>0);if(!priceData.length){showAlert('Adicione pelo menos 1 produto com preco','error');return}showLoading();try{const data=await apiCall('price-monitor',{prices:priceData});hideLoading();if(data.ok){const os=document.getElementById('outputSection');os.classList.add('show');os.style.display='block';const vals=priceData.map(p=>p.price);const avg=(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2);const min=Math.min(...vals).toFixed(2);const max=Math.max(...vals).toFixed(2);document.getElementById('statsGrid').innerHTML='<div class="pm-stat"><div class="pm-stat-label">Media</div><div class="pm-stat-val">R$'+avg+'</div></div><div class="pm-stat"><div class="pm-stat-label">Min</div><div class="pm-stat-val">R$'+min+'</div></div><div class="pm-stat"><div class="pm-stat-label">Max</div><div class="pm-stat-val">R$'+max+'</div></div>';document.getElementById('output').innerHTML=data.output.replace(/\n/g,'<br>');document.getElementById('output').dataset.raw=data.output}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro de conexao','error')}});
+    function copyOutput(){navigator.clipboard.writeText(document.getElementById('output').dataset.raw).then(()=>showAlert('Copiado!'))}
   </script>
 </body>
 </html>

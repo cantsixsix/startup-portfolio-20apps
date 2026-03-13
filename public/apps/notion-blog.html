@@ -1,222 +1,119 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog CMS - Notion-style</title>
+  <title>BlogForge &#8212; Notion-Style Blog CMS</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-notion-blog{background:#ffffff;color:#37352f;font-family:'Inter',sans-serif}
+    .nb-sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:#fbfbfa;border-right:1px solid #e8e7e4;padding:12px;display:flex;flex-direction:column;z-index:100;transition:transform .2s}
+    @media(max-width:768px){.nb-sidebar{transform:translateX(-100%);width:260px}.nb-sidebar.open{transform:translateX(0)}}
+    .nb-sb-header{padding:4px 8px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+    .nb-sb-ico{font-size:18px}.nb-sb-title{font-weight:600;font-size:14px;color:#37352f}
+    .nb-sb-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#9b9a97;padding:8px;margin-top:12px}
+    .nb-sb-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;font-size:13px;color:#37352f;cursor:pointer;transition:background .1s;text-decoration:none}
+    .nb-sb-item:hover{background:rgba(55,53,47,.04)}
+    .nb-sb-item.active{background:rgba(55,53,47,.06);font-weight:600}
+    .nb-sb-item-ico{font-size:14px;opacity:.6;width:18px;text-align:center}
+    .nb-sb-foot{margin-top:auto;padding:8px;border-top:1px solid #e8e7e4}
+    .nb-sb-foot a{color:#9b9a97;text-decoration:none;font-size:12px;display:flex;align-items:center;gap:6px;transition:color .2s}
+    .nb-sb-foot a:hover{color:#37352f}
+    .nb-main{margin-left:240px;min-height:100vh}
+    @media(max-width:768px){.nb-main{margin-left:0}}
+    .nb-topbar{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #f0f0ef;position:sticky;top:0;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);z-index:50}
+    .nb-breadcrumb{font-size:12px;color:#9b9a97;display:flex;align-items:center;gap:4px}
+    .nb-breadcrumb a{color:#9b9a97;text-decoration:none;transition:color .15s}
+    .nb-breadcrumb a:hover{color:#37352f}
+    .nb-topbar-actions{display:flex;gap:4px}
+    .nb-tb-btn{padding:4px 10px;border-radius:4px;font-size:12px;font-family:inherit;cursor:pointer;transition:all .1s;border:none;background:transparent;color:#9b9a97}
+    .nb-tb-btn:hover{background:rgba(55,53,47,.06);color:#37352f}
+    .nb-tb-btn.blue{color:#2eaadc}
+    .nb-editor{max-width:720px;margin:0 auto;padding:48px 24px 80px}
+    .nb-page-icon{font-size:56px;margin-bottom:8px;cursor:pointer}
+    .nb-page-title{font-family:'Noto Serif',serif;font-size:clamp(2rem,5vw,2.8rem);font-weight:700;color:#37352f;line-height:1.2;margin-bottom:4px}
+    .nb-page-desc{color:#9b9a97;font-size:14px;margin-bottom:32px}
+    .nb-callout{background:#f1f1ef;border-radius:4px;padding:16px 16px 16px 44px;position:relative;margin-bottom:24px;font-size:14px;color:#37352f;line-height:1.7}
+    .nb-callout::before{content:'&#128161;';position:absolute;left:14px;top:16px;font-size:18px}
+    .nb-divider{border:none;border-top:1px solid #e8e7e4;margin:24px 0}
+    .nb-h2{font-size:20px;font-weight:700;color:#37352f;margin:24px 0 8px}
+    .nb-p{font-size:14px;color:#37352f;line-height:1.8;margin-bottom:12px}
+    .nb-toggle{margin-bottom:16px}
+    .nb-toggle-head{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:600;color:#37352f;padding:4px 0}
+    .nb-toggle-head::before{content:'&#9654;';font-size:10px;transition:transform .2s;color:#9b9a97}
+    .nb-toggle-head.open::before{transform:rotate(90deg)}
+    .nb-toggle-body{display:none;padding:8px 0 8px 22px;font-size:14px;color:#37352f;line-height:1.7}
+    .nb-toggle-body.open{display:block}
+    .nb-tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:1px solid #e8e7e4}
+    .nb-tab{padding:8px 16px;font-size:13px;font-weight:500;color:#9b9a97;cursor:pointer;transition:all .15s;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+    .nb-tab.active{color:#37352f;border-bottom-color:#37352f}
+    .nb-section{display:none}.nb-section.active{display:block}
+    .nb-form{margin-bottom:16px}
+    .nb-field{margin-bottom:12px}
+    .nb-field label{display:block;font-size:12px;font-weight:600;color:#9b9a97;margin-bottom:4px}
+    .nb-field input,.nb-field textarea{width:100%;padding:8px 10px;border:1px solid #e8e7e4;border-radius:4px;font-family:inherit;font-size:14px;color:#37352f;transition:all .15s;background:white}
+    .nb-field input:focus,.nb-field textarea:focus{outline:none;border-color:#2eaadc;box-shadow:0 0 0 2px rgba(46,170,220,.1)}
+    .nb-field textarea{resize:vertical;min-height:120px;line-height:1.7}
+    .nb-inline-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:500px){.nb-inline-fields{grid-template-columns:1fr}}
+    .nb-btn{padding:8px 16px;border-radius:4px;font-size:13px;font-family:inherit;font-weight:500;cursor:pointer;transition:all .1s;border:none}
+    .nb-btn.primary{background:#2eaadc;color:white}.nb-btn.primary:hover{background:#2596c4}
+    .nb-btn.ghost{background:transparent;color:#9b9a97;border:1px solid #e8e7e4}.nb-btn.ghost:hover{background:#f7f6f3;color:#37352f}
+    .nb-post-list{margin-top:16px}
+    .nb-post-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:4px;transition:background .1s;margin-bottom:2px;cursor:default}
+    .nb-post-item:hover{background:rgba(55,53,47,.04)}
+    .nb-post-item-ico{font-size:14px;margin-right:8px;opacity:.6}
+    .nb-post-item-title{font-size:14px;font-weight:500;flex:1}
+    .nb-post-item-meta{font-size:11px;color:#9b9a97;margin-left:12px}
+    .nb-post-item-actions{display:flex;gap:4px;margin-left:8px}
+    .nb-post-item-actions button{padding:4px 8px;border-radius:4px;border:none;font-size:11px;cursor:pointer;background:transparent;color:#9b9a97;font-family:inherit;transition:all .1s}
+    .nb-post-item-actions button:hover{background:#f0f0ef;color:#37352f}
+    .nb-badge{display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600}
+    .nb-badge.draft{background:#f1f1ef;color:#9b9a97}.nb-badge.published{background:#dbeddb;color:#0f7b0f}
+    .nb-output{display:none;margin-top:16px}
+    .nb-output.show{display:block}
+    .nb-result{background:#f7f6f3;border-radius:4px;padding:16px;font-size:14px;line-height:1.7;color:#37352f}
+  </style>
 </head>
 <body class="app-page app-notion-blog">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">✍️</span>
-        <h1>Blog CMS</h1>
-      </div>
-      <p class="app-subtitle">Sistema de gerenciamento de blog com SEO</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <h2>Novo Post</h2>
-        <form id="postForm">
-          <div class="form-group">
-            <label for="title">Título *</label>
-            <input type="text" id="title" required placeholder="Título do post">
-          </div>
-          
-          <div class="form-group">
-            <label for="slug">Slug (URL) *</label>
-            <input type="text" id="slug" required placeholder="meu-post-incrivel">
-          </div>
-
-          <div class="form-group">
-            <label for="content">Conteúdo *</label>
-            <textarea id="content" rows="10" required placeholder="Escreva o conteúdo do post em Markdown..."></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="tags">Tags (separadas por vírgula)</label>
-            <input type="text" id="tags" placeholder="javascript, react, tutorial">
-          </div>
-
-          <div class="form-group">
-            <label for="metaDescription">Meta Description (SEO)</label>
-            <input type="text" id="metaDescription" maxlength="160" placeholder="Descrição para SEO (máx 160 caracteres)">
-          </div>
-
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">💾</span>
-            Salvar Rascunho
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section">
-        <div class="output-header">
-          <h2>Posts Publicados</h2>
-          <button onclick="loadPosts()" class="btn-secondary">🔄 Atualizar</button>
-        </div>
-        <div id="postsList"></div>
-      </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Processando...</p>
+  <aside class="nb-sidebar">
+    <div class="nb-sb-header"><span class="nb-sb-ico">&#128221;</span><span class="nb-sb-title">BlogForge</span></div>
+    <span class="nb-sb-section">Workspace</span>
+    <a class="nb-sb-item active" onclick="switchTab('create')"><span class="nb-sb-item-ico">&#10133;</span>Nova Pagina</a>
+    <a class="nb-sb-item" onclick="switchTab('posts')"><span class="nb-sb-item-ico">&#128196;</span>Todas as Paginas</a>
+    <span class="nb-sb-section">Acoes</span>
+    <a class="nb-sb-item" onclick="switchTab('view')"><span class="nb-sb-item-ico">&#128064;</span>Visualizar Post</a>
+    <a class="nb-sb-item" onclick="switchTab('publish')"><span class="nb-sb-item-ico">&#128640;</span>Publicar</a>
+    <div class="nb-sb-foot"><a href="/"><span>&#8592;</span> Voltar ao Portfolio</a></div>
+  </aside>
+  <main class="nb-main">
+    <div class="nb-topbar"><div class="nb-breadcrumb"><a href="/">Home</a><span>/</span><a>BlogForge</a></div><div class="nb-topbar-actions"><button class="nb-tb-btn" onclick="loadPosts()">&#128260;</button><button class="nb-tb-btn blue">Share</button></div></div>
+    <div class="nb-editor">
+      <div class="nb-page-icon">&#128221;</div>
+      <h1 class="nb-page-title">Blog CMS com IA</h1>
+      <p class="nb-page-desc">Crie, gerencie e publique posts com a simplicidade do Notion.</p>
+      <div class="nb-callout">Este CMS usa inteligencia artificial para gerar conteudo otimizado. Crie posts, gerencie rascunhos e publique com um clique.</div>
+      <div class="nb-toggle"><div class="nb-toggle-head" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">Como funciona?</div><div class="nb-toggle-body">1. Crie um novo post com titulo, conteudo e tags<br>2. A IA otimiza o texto e gera meta descriptions<br>3. Publique quando estiver pronto<br>4. Visualize posts em paginas estilizadas</div></div>
+      <hr class="nb-divider">
+      <div class="nb-tabs"><button class="nb-tab active" onclick="switchTab('create')">&#10133; Criar</button><button class="nb-tab" onclick="switchTab('posts')">&#128196; Posts</button><button class="nb-tab" onclick="switchTab('view')">&#128064; Ver</button><button class="nb-tab" onclick="switchTab('publish')">&#128640; Publicar</button></div>
+      <div class="nb-section active" id="createSection"><h2 class="nb-h2">Nova Pagina</h2><form id="createForm" class="nb-form"><div class="nb-inline-fields"><div class="nb-field"><label>Titulo</label><input type="text" id="postTitle" required placeholder="Titulo do post" oninput="document.getElementById('postSlug').value=this.value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')"></div><div class="nb-field"><label>Slug</label><input type="text" id="postSlug" required placeholder="url-do-post"></div></div><div class="nb-field"><label>Conteudo</label><textarea id="postContent" rows="8" required placeholder="Escreva seu conteudo aqui... A IA vai otimizar!"></textarea></div><div class="nb-inline-fields"><div class="nb-field"><label>Tags</label><input type="text" id="postTags" placeholder="tech, ai, startup"></div><div class="nb-field"><label>Meta Description</label><input type="text" id="postMeta" placeholder="Descricao para SEO"></div></div><button type="submit" class="nb-btn primary" style="width:100%">&#10133; Criar Post</button></form><div class="nb-output" id="createOutput"><div class="nb-result" id="createResult"></div></div></div>
+      <div class="nb-section" id="postsSection"><h2 class="nb-h2">Todas as Paginas</h2><div class="nb-post-list" id="postList"><p class="nb-p" style="color:#9b9a97">Carregando posts...</p></div></div>
+      <div class="nb-section" id="viewSection"><h2 class="nb-h2">Visualizar Post</h2><div class="nb-form"><div class="nb-field"><label>ID do Post</label><input type="text" id="viewPostId" placeholder="ID do post"><button onclick="viewPost()" class="nb-btn primary" style="margin-top:8px">&#128064; Visualizar</button></div></div></div>
+      <div class="nb-section" id="publishSection"><h2 class="nb-h2">Publicar Post</h2><div class="nb-form"><div class="nb-field"><label>ID do Post</label><input type="text" id="publishPostId" placeholder="ID do post"><button onclick="publishPost()" class="nb-btn primary" style="margin-top:8px">&#128640; Publicar</button></div></div><div class="nb-output" id="publishOutput"><div class="nb-result" id="publishResult"></div></div></div>
     </div>
-  </div>
-
+  </main>
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Carregando...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    // Auto-generate slug from title
-    document.getElementById('title').addEventListener('input', (e) => {
-      const slug = e.target.value
-        .toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-      document.getElementById('slug').value = slug;
-    });
-
-    document.getElementById('postForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const tags = document.getElementById('tags').value.split(',').map(t => t.trim()).filter(Boolean);
-        
-        const data = await apiCall('notion-blog', {
-          action: 'create-post',
-          post: {
-            title: document.getElementById('title').value,
-            slug: document.getElementById('slug').value,
-            content: document.getElementById('content').value,
-            tags,
-            metaDescription: document.getElementById('metaDescription').value
-          }
-        });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          showAlert('Post salvo como rascunho!');
-          document.getElementById('postForm').reset();
-          loadPosts();
-        } else {
-          showAlert(data.error || 'Erro ao salvar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    async function loadPosts() {
-      showLoading();
-      try {
-        const data = await apiCall('notion-blog', { action: 'list-posts' });
-        hideLoading();
-        
-        if (data.ok && data.posts.length > 0) {
-          document.getElementById('postsList').innerHTML = data.posts.map(post => `
-            <div class="list-item">
-              <div class="row-between mb-12">
-                <div>
-                  <h4>${post.title}</h4>
-                  <p class="muted text-sm">/${post.slug}</p>
-                </div>
-                <span class="badge badge-${post.published ? 'success' : 'warning'}">
-                  ${post.published ? '✅ Publicado' : '📝 Rascunho'}
-                </span>
-              </div>
-              ${post.tags && post.tags.length > 0 ? `
-                <p>${post.tags.map(tag => `<span class="badge badge-info">${tag}</span>`).join(' ')}</p>
-              ` : ''}
-              <div class="row-actions">
-                <button onclick="viewPost('${post.id}')" class="btn-secondary">👁️ Ver</button>
-                <button onclick="publishPost('${post.id}')" class="btn-secondary">🚀 Publicar</button>
-              </div>
-            </div>
-          `).join('');
-        } else {
-          document.getElementById('postsList').innerHTML = `
-            <div class="empty-state">
-              <div class="empty-state-icon">✍️</div>
-              <p>Nenhum post criado ainda</p>
-            </div>
-          `;
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro ao carregar posts', 'error');
-      }
-    }
-
-    async function viewPost(id) {
-      showLoading();
-      try {
-        const data = await apiCall('notion-blog', { action: 'get-post', postId: id });
-        hideLoading();
-        
-        if (data.ok) {
-          const html = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="UTF-8">
-              <title>${data.post.title}</title>
-              <style>
-                body { font-family: Georgia, serif; max-width: 700px; margin: 50px auto; padding: 20px; line-height: 1.8; }
-                h1 { font-size: 2.5rem; margin-bottom: 10px; }
-                .meta { color: #666; margin-bottom: 30px; }
-                .tag { background: #f0f0f0; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem; margin-right: 5px; }
-              </style>
-            </head>
-            <body>
-              <h1>${data.post.title}</h1>
-              <div class="meta">
-                ${data.post.tags ? data.post.tags.map(t => `<span class="tag">${t}</span>`).join('') : ''}
-              </div>
-              <div>${data.post.content.replace(/\n/g, '<br>')}</div>
-            </body>
-            </html>
-          `;
-          const win = window.open('', '_blank');
-          win.document.write(html);
-          win.document.close();
-        } else {
-          showAlert('Post não encontrado', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    }
-
-    async function publishPost(id) {
-      showLoading();
-      try {
-        const data = await apiCall('notion-blog', {
-          action: 'update-post',
-          postId: id,
-          updates: { published: true }
-        });
-        hideLoading();
-        
-        if (data.ok) {
-          showAlert('Post publicado!');
-          loadPosts();
-        } else {
-          showAlert('Erro ao publicar', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    }
-
+    function switchTab(name){document.querySelectorAll('.nb-section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nb-tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nb-sb-item').forEach(i=>i.classList.remove('active'));const map={create:'createSection',posts:'postsSection',view:'viewSection',publish:'publishSection'};document.getElementById(map[name]).classList.add('active')}
+    async function loadPosts(){showLoading();try{const data=await apiCall('notion-blog',{action:'list-posts'});hideLoading();if(data.ok&&data.posts){document.getElementById('postList').innerHTML=data.posts.length?data.posts.map(p=>'<div class="nb-post-item"><span class="nb-post-item-ico">&#128196;</span><span class="nb-post-item-title">'+p.title+'</span><span class="nb-badge '+(p.published?'published':'draft')+'">'+(p.published?'Publicado':'Rascunho')+'</span><span class="nb-post-item-meta">ID: '+p.id+'</span><div class="nb-post-item-actions"><button onclick="prefillView(\''+p.id+'\')">&#128064;</button><button onclick="prefillPublish(\''+p.id+'\')">&#128640;</button></div></div>').join(''):'<p class="nb-p" style="color:#9b9a97">Nenhum post ainda. Crie o primeiro!</p>'}}catch(err){hideLoading();showAlert('Erro','error')}}
+    function prefillView(id){document.getElementById('viewPostId').value=id;switchTab('view')}
+    function prefillPublish(id){document.getElementById('publishPostId').value=id;switchTab('publish')}
+    async function viewPost(){const id=document.getElementById('viewPostId').value;if(!id){showAlert('Insira o ID','error');return}showLoading();try{const data=await apiCall('notion-blog',{action:'get-post',postId:id});hideLoading();if(data.ok){const w=window.open('','_blank');w.document.write(data.html||('<html><body style="font-family:Inter,sans-serif;max-width:680px;margin:40px auto;padding:0 24px"><h1>'+data.post.title+'</h1><p>'+data.post.content+'</p></body></html>'));w.document.close()}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}}
+    async function publishPost(){const id=document.getElementById('publishPostId').value;if(!id){showAlert('Insira o ID','error');return}showLoading();try{const data=await apiCall('notion-blog',{action:'update-post',postId:id,updates:{published:true}});hideLoading();if(data.ok){document.getElementById('publishOutput').classList.add('show');document.getElementById('publishOutput').style.display='block';document.getElementById('publishResult').innerHTML='<strong>&#9989; Post publicado!</strong>';loadPosts()}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}}
+    document.getElementById('createForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('notion-blog',{action:'create-post',title:document.getElementById('postTitle').value,slug:document.getElementById('postSlug').value,content:document.getElementById('postContent').value,tags:document.getElementById('postTags').value.split(',').map(t=>t.trim()).filter(Boolean),metaDescription:document.getElementById('postMeta').value});hideLoading();if(data.ok){document.getElementById('createOutput').classList.add('show');document.getElementById('createOutput').style.display='block';document.getElementById('createResult').innerHTML='<strong>&#9989; Post criado!</strong> ID: '+(data.post?.id||'--');loadPosts()}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro','error')}});
     loadPosts();
   </script>
 </body>

@@ -1,87 +1,82 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ESG Calculator</title>
+  <title>GreenPulse &#8212; ESG Calculator</title>
   <link rel="stylesheet" href="/styles/app.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body.app-esg{background:#f6f9f2;color:#1a2e1a;font-family:'Inter',sans-serif}
+    .esg-nav{background:rgba(246,249,242,.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(34,90,34,.08);position:sticky;top:0;z-index:100;padding:0 24px}
+    .esg-nav-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .esg-logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:#1a2e1a;font-weight:700;font-size:18px}
+    .esg-logo .leaf{font-size:24px}
+    .esg-nav-links{display:flex;gap:20px;align-items:center}
+    .esg-nav-links a{color:#5a7a5a;text-decoration:none;font-size:13px;font-weight:500;transition:color .2s}
+    .esg-nav-links a:hover{color:#2d6a2d}
+    .esg-hero{max-width:1000px;margin:0 auto;padding:80px 24px 60px;text-align:center;position:relative}
+    .esg-hero::before{content:'&#127793;';position:absolute;top:30px;left:10%;font-size:60px;opacity:.06;transform:rotate(-15deg)}
+    .esg-hero::after{content:'&#127807;';position:absolute;bottom:20px;right:10%;font-size:80px;opacity:.06;transform:rotate(20deg)}
+    .esg-hero-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(34,130,34,.08);color:#2d6a2d;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:20px;border:1px solid rgba(34,130,34,.12)}
+    .esg-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.4rem);line-height:1.15;color:#1a2e1a;margin-bottom:16px;font-weight:400}
+    .esg-hero h1 .green{color:#2d6a2d}
+    .esg-hero-sub{color:#5a7a5a;font-size:1.05rem;line-height:1.7;max-width:560px;margin:0 auto 32px}
+    .esg-hero-stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin-top:40px;padding-top:28px;border-top:1px solid rgba(34,90,34,.08)}
+    .esg-stat{text-align:center}.esg-stat-val{font-family:'DM Serif Display',serif;font-size:2rem;color:#2d6a2d;display:block}.esg-stat-label{font-size:12px;color:#5a7a5a}
+    .esg-btn{background:#2d6a2d;color:#fff;padding:14px 28px;border:none;border-radius:30px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .3s;box-shadow:0 4px 16px rgba(45,106,45,.2)}
+    .esg-btn:hover{background:#226522;transform:translateY(-2px);box-shadow:0 8px 24px rgba(45,106,45,.3)}
+    .esg-btn-out{background:transparent;color:#2d6a2d;padding:14px 28px;border:1.5px solid rgba(45,106,45,.3);border-radius:30px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .3s}
+    .esg-btn-out:hover{border-color:#2d6a2d;background:rgba(45,106,45,.04)}
+    .esg-features{max-width:1000px;margin:0 auto;padding:50px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    @media(max-width:768px){.esg-features{grid-template-columns:1fr}}
+    .esg-feat{background:#fff;border-radius:16px;padding:28px;border:1px solid rgba(34,90,34,.06);transition:all .3s;position:relative;overflow:hidden}
+    .esg-feat:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(34,90,34,.06);border-color:rgba(34,90,34,.12)}
+    .esg-feat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#2d6a2d,#4ade80);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+    .esg-feat:hover::after{transform:scaleX(1)}
+    .esg-feat-ico{font-size:28px;margin-bottom:14px;display:block}
+    .esg-feat h3{font-size:15px;font-weight:700;margin-bottom:6px;color:#1a2e1a}
+    .esg-feat p{font-size:13px;color:#5a7a5a;line-height:1.6}
+    .esg-divider{max-width:1000px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:12px;color:rgba(34,90,34,.2);font-size:20px}
+    .esg-divider::before,.esg-divider::after{content:'';flex:1;height:1px;background:rgba(34,90,34,.08)}
+    .esg-demo{max-width:800px;margin:0 auto;padding:50px 24px}
+    .esg-demo-title{text-align:center;margin-bottom:32px}
+    .esg-demo-title h2{font-family:'DM Serif Display',serif;font-size:1.8rem;color:#1a2e1a;margin-bottom:8px}
+    .esg-demo-title p{color:#5a7a5a;font-size:14px}
+    .esg-demo-card{background:#fff;border-radius:20px;padding:32px;border:1px solid rgba(34,90,34,.08);box-shadow:0 8px 32px rgba(34,90,34,.04)}
+    .esg-demo-card label{font-weight:600;font-size:14px;color:#1a2e1a;display:block;margin-bottom:8px}
+    .esg-demo-card textarea{width:100%;padding:16px;border:1.5px solid rgba(34,90,34,.12);border-radius:12px;font-family:inherit;font-size:14px;resize:vertical;min-height:120px;transition:all .2s;background:#fafcf8;color:#1a2e1a}
+    .esg-demo-card textarea:focus{outline:none;border-color:#2d6a2d;box-shadow:0 0 0 3px rgba(45,106,45,.08)}
+    .esg-output{margin-top:24px;display:none}
+    .esg-output.show{display:block}
+    .esg-output-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .esg-output-head h3{font-size:15px;font-weight:700;color:#1a2e1a}
+    .esg-output-box{background:#fafcf8;border:1px solid rgba(34,90,34,.08);border-radius:12px;padding:24px;line-height:1.8;font-size:14px;color:#334a33}
+    .esg-output-box h2,.esg-output-box h3{color:#1a2e1a;margin:12px 0 6px}
+    .esg-copy-btn{background:#f0f5ed;border:1px solid rgba(34,90,34,.12);padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer;color:#5a7a5a;font-family:inherit;font-weight:600;transition:all .2s}
+    .esg-copy-btn:hover{border-color:#2d6a2d;color:#2d6a2d}
+    .esg-cta{text-align:center;padding:60px 24px;background:linear-gradient(180deg,#f6f9f2 0%,#e8f0e0 100%)}
+    .esg-cta h2{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,3vw,2rem);color:#1a2e1a;margin-bottom:12px}
+    .esg-cta p{color:#5a7a5a;margin-bottom:24px;font-size:14px}
+    .esg-foot{text-align:center;padding:24px;font-size:12px;color:#8aa88a}
+    .esg-foot a{color:#5a7a5a;text-decoration:none}.esg-foot a:hover{color:#2d6a2d}
+    @media(max-width:768px){.esg-nav-links a:not([href="/"]){display:none}}
+  </style>
 </head>
 <body class="app-page app-esg">
-  <div class="app-container">
-    <header class="app-header">
-      <a href="/" class="back-link">← Voltar</a>
-      <div class="app-title">
-        <span class="app-icon">🌱</span>
-        <h1>ESG Calculator</h1>
-      </div>
-      <p class="app-subtitle">Calcule métricas ESG para empresas B2B</p>
-    </header>
-
-    <main class="app-main">
-      <div class="input-section">
-        <form id="appForm">
-          <div class="form-group">
-            <label for="input">Informações da empresa</label>
-            <textarea id="input" rows="8" required placeholder="Ex: SaaS B2B com 200 funcionários, operação 100% remota. Práticas: home office permanente reduzindo deslocamentos, política de diversidade com 40% mulheres em cargos de liderança, programa de reciclagem de equipamentos eletrônicos, parcerias com fornecedores certificados carbon-neutral."></textarea>
-          </div>
-          <button type="submit" class="btn-primary">
-            <span class="btn-icon">📊</span>
-            Calcular Métricas ESG
-          </button>
-        </form>
-      </div>
-
-      <div class="output-section" id="outputSection" class="hidden">
-        <div class="output-header">
-          <h2>Relatório ESG</h2>
-          <button onclick="copyOutput()" class="btn-secondary">📋 Copiar</button>
-        </div>
-        <div id="output" class="output-content"></div>
-      </div>
-    </main>
-
-    <div id="loading" class="loading hidden">
-      <div class="spinner"></div>
-      <p>Calculando métricas ESG...</p>
-    </div>
-  </div>
-
+  <nav class="esg-nav"><div class="esg-nav-inner"><a href="/" class="esg-logo"><span class="leaf">&#127793;</span>GreenPulse</a><div class="esg-nav-links"><a href="/">&#8592; Voltar</a><a href="#features">Features</a><a href="#demo">Calcular</a></div></div></nav>
+  <section class="esg-hero"><div class="esg-hero-tag">&#127807; ESG Intelligence Platform</div><h1>Metricas ESG<br>para empresas que se <span class="green">importam</span></h1><p class="esg-hero-sub">Calcule scores ambientais, sociais e de governanca com IA. Relatorios prontos para stakeholders.</p><div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><a href="#demo" class="esg-btn">&#127793; Calcular Metricas</a><a href="#features" class="esg-btn-out">Saiba mais</a></div><div class="esg-hero-stats"><div class="esg-stat"><span class="esg-stat-val">ESG</span><span class="esg-stat-label">Score completo</span></div><div class="esg-stat"><span class="esg-stat-val">AI</span><span class="esg-stat-label">Powered</span></div><div class="esg-stat"><span class="esg-stat-val">GRI</span><span class="esg-stat-label">Compativel</span></div></div></section>
+  <div class="esg-divider">&#127807;</div>
+  <section class="esg-features" id="features"><div class="esg-feat"><span class="esg-feat-ico">&#127758;</span><h3>Environmental</h3><p>Calcule pegada de carbono, eficiencia energetica e praticas sustentaveis.</p></div><div class="esg-feat"><span class="esg-feat-ico">&#128101;</span><h3>Social</h3><p>Diversidade, inclusao, seguranca do trabalho e impacto comunitario.</p></div><div class="esg-feat"><span class="esg-feat-ico">&#127970;</span><h3>Governance</h3><p>Transparencia, etica, compliance e gestao de riscos.</p></div><div class="esg-feat"><span class="esg-feat-ico">&#128202;</span><h3>Relatorios PDF</h3><p>Export pronto para investidores, board e stakeholders.</p></div><div class="esg-feat"><span class="esg-feat-ico">&#128161;</span><h3>Recomendacoes</h3><p>IA sugere melhorias para aumentar seu score ESG.</p></div><div class="esg-feat"><span class="esg-feat-ico">&#127942;</span><h3>Benchmarks</h3><p>Compare com industria e identifique gaps.</p></div></section>
+  <section class="esg-demo" id="demo"><div class="esg-demo-title"><h2>&#127793; Calcule seu Score ESG</h2><p>Descreva as praticas da sua empresa</p></div><div class="esg-demo-card"><form id="appForm"><label>Informacoes da empresa</label><textarea id="input" rows="8" required placeholder="Ex: SaaS B2B com 200 funcionarios, operacao 100% remota. Praticas: home office permanente, politica de diversidade com 40% mulheres em lideranca, programa de reciclagem, fornecedores carbon-neutral."></textarea><div style="margin-top:16px"><button type="submit" class="esg-btn" style="width:100%;justify-content:center">&#128202; Calcular Metricas ESG</button></div></form><div class="esg-output" id="outputSection"><div class="esg-output-head"><h3>&#127793; Relatorio ESG</h3><button onclick="copyOutput()" class="esg-copy-btn">&#128203; Copiar</button></div><div class="esg-output-box" id="output"></div></div></div></section>
+  <section class="esg-cta"><h2>Comece sua jornada ESG hoje &#127793;</h2><p>Metricas claras, acoes concretas, impacto real.</p><a href="#demo" class="esg-btn">Calcular Gratuitamente</a></section>
+  <footer class="esg-foot"><p>GreenPulse &middot; &#127793; &middot; <a href="/">Voltar ao Portfolio</a></p></footer>
+  <div id="loading" class="loading hidden"><div class="spinner"></div><p>Calculando metricas ESG...</p></div>
   <script src="/scripts/app.js"></script>
   <script>
-    document.getElementById('appForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      showLoading();
-      
-      try {
-        const data = await apiCall('esg', {
-          input: document.getElementById('input').value
-        });
-        
-        hideLoading();
-        
-        if (data.ok) {
-          document.getElementById('outputSection').classList.remove('hidden');
-          const html = data.output
-            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\n/g, '<br>');
-          
-          document.getElementById('output').innerHTML = html;
-          document.getElementById('output').dataset.raw = data.output;
-        } else {
-          showAlert(data.error || 'Erro ao calcular', 'error');
-        }
-      } catch (error) {
-        hideLoading();
-        showAlert('Erro de conexão', 'error');
-      }
-    });
-
-    function copyOutput() {
-      const text = document.getElementById('output').dataset.raw;
-      navigator.clipboard.writeText(text).then(() => showAlert('Copiado!'));
-    }
+    document.getElementById('appForm').addEventListener('submit',async(e)=>{e.preventDefault();showLoading();try{const data=await apiCall('esg',{input:document.getElementById('input').value});hideLoading();if(data.ok){const os=document.getElementById('outputSection');os.classList.add('show');os.style.display='block';const html=data.output.replace(/^### (.*$)/gim,'<h3>$1</h3>').replace(/^## (.*$)/gim,'<h2>$1</h2>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');document.getElementById('output').innerHTML=html;document.getElementById('output').dataset.raw=data.output}else{showAlert(data.error||'Erro','error')}}catch(err){hideLoading();showAlert('Erro de conexao','error')}});
+    function copyOutput(){navigator.clipboard.writeText(document.getElementById('output').dataset.raw).then(()=>showAlert('Copiado!'))}
   </script>
 </body>
 </html>
